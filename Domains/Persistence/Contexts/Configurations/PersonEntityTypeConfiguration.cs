@@ -13,6 +13,8 @@ public class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Person>
         builder.Property(x => x.Name).HasMaxLength(255).IsRequired();
         builder.Property(x => x.Age).IsRequired();
         builder.Property(x => x.PersonType).IsRequired();
+        builder.Property(x => x.PhoneNumber).IsRequired();
+        builder.Property(x => x.ImagePath).IsRequired();
 
         builder.HasOne(x => x.Address).WithOne().HasForeignKey<Person>(x => x.AddressId);
         builder.HasMany(x => x.BloodPressures).WithOne(x => x.Person);

@@ -13,6 +13,7 @@ public class ModelToViewModelProfile : Profile
     public ModelToViewModelProfile() 
     {
         CreateMap<Person, PersonViewModel>();
+        CreateMap<Person, PersonInfoViewModel>();
 
         CreateMap<Address, AddressViewModel>();
 

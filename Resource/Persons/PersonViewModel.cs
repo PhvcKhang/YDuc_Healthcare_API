@@ -1,5 +1,6 @@
 ﻿using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Resource.Addresses;
+using System.Runtime.Serialization;
 
 namespace HealthCareApplication.Resource.Persons;
 
@@ -12,8 +13,10 @@ public class PersonViewModel
     public AddressViewModel Address { get; set; }
     public decimal Weight { get; set; }
     public decimal Height { get; set; }
+    public string PhoneNumber { get; private set; }
+    public string ImagePath { get; private set; }
 
-    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height)
+    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height, string phoneNumber, string imagePath)
     {
         PersonId = personId;
         Name = name;
@@ -22,5 +25,7 @@ public class PersonViewModel
         Address = address;
         Weight = weight;
         Height = height;
+        PhoneNumber = phoneNumber;
+        ImagePath = imagePath;
     }
 }

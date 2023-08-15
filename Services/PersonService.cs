@@ -26,8 +26,13 @@ public class PersonService : IPersonService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         return _mapper.Map<PersonViewModel>(person);
     }
+    public async Task<PersonInfoViewModel> GetPersonInfo(string personId)
+    {
+        var person = await _personRepository.GetPersonInfoAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
+        return _mapper.Map<PersonInfoViewModel>(person);
+    }
 
-    public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
+        public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
     {
         var person = _mapper.Map<CreatePersonViewModel, Person>(viewModel);
         await _personRepository.Add(person);
@@ -40,7 +45,7 @@ public class PersonService : IPersonService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var address = _mapper.Map<Address>(viewModel.Address);
 
-        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height);
+        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.ImagePath);
         _personRepository.Update(person);
         
         return await _unitOfWork.CompleteAsync();

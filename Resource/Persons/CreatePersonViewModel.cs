@@ -21,8 +21,13 @@ public class CreatePersonViewModel
     public decimal Weight { get; set; }
     [DataMember]
     public decimal Height { get; set; }
+    [DataMember]
+    public string PhoneNumber { get; private set; }
+    [DataMember]
+    public string ImagePath { get; private set; }
 
-    public CreatePersonViewModel(string personId, string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height)
+
+    public CreatePersonViewModel(string personId, string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string imagePath)
     {
         PersonId = personId;
         Name = name;
@@ -31,5 +36,8 @@ public class CreatePersonViewModel
         Address = address;
         Weight = weight;
         Height = height;
+        PhoneNumber = phoneNumber;
+        ImagePath = imagePath;
+
     }
 }

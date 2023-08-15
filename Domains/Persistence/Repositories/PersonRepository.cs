@@ -3,6 +3,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using HealthCareApplication.Domains.Persistence.Exceptions;
 using HealthCareApplication.Domains.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace HealthCareApplication.Domains.Persistence.Repositories;
 
@@ -33,6 +34,15 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Include(x => x.BodyTemperatures)
             .Include(x => x.Patients)
             .FirstOrDefaultAsync(x => x.PersonId == personId);
+    }
+    public async Task<Person?> GetPersonInfoAsync(string personId)
+    {
+        return await _context.Persons
+        .Include(x => x.Address)
+        .Include(x => x.BloodPressures.OrderByDescending(x => x.Timestamp))
+        .Include(x => x.BloodSugars.OrderByDescending(x => x.Timestamp))
+        .Include(x => x.BodyTemperatures.OrderByDescending(x => x.Timestamp))
+        .FirstOrDefaultAsync(x => x.PersonId == personId);
     }
 
     public async Task<List<Person>> GetListByIdAsync(List<string> personIds)

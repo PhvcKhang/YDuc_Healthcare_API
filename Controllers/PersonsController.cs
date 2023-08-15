@@ -49,7 +49,7 @@ public class PersonsController : Controller
 
     [HttpGet]
     [Route("{personId}")]
-    public async Task<PersonViewModel> GetPerson([FromRoute]string personId)
+    public async Task<PersonViewModel> GetPerson([FromRoute] string personId)
     {
         return await _personService.GetPerson(personId);
     }
@@ -69,4 +69,11 @@ public class PersonsController : Controller
             return BadRequest(errorMessage);
         }
     }
+    [HttpGet]
+    [Route("personInfo/{personId}")]
+    public async Task<PersonInfoViewModel> GetPersonInfo([FromRoute] string personId)
+    {
+        return await _personService.GetPersonInfo(personId);
+    }
+
 }
