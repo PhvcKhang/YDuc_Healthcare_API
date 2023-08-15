@@ -14,9 +14,9 @@ public class PersonViewModel
     public decimal Weight { get; set; }
     public decimal Height { get; set; }
     public string PhoneNumber { get; private set; }
-    public string ImagePath { get; private set; }
+    public string Avatar { get; private set; }
 
-    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height, string phoneNumber, string imagePath)
+    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         PersonId = personId;
         Name = name;
@@ -26,6 +26,6 @@ public class PersonViewModel
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        ImagePath = imagePath;
+        Avatar = avatar;
     }
 }

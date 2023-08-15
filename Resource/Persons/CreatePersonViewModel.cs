@@ -24,10 +24,10 @@ public class CreatePersonViewModel
     [DataMember]
     public string PhoneNumber { get; private set; }
     [DataMember]
-    public string ImagePath { get; private set; }
+    public string Avatar { get; private set; }
 
 
-    public CreatePersonViewModel(string personId, string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string imagePath)
+    public CreatePersonViewModel(string personId, string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         PersonId = personId;
         Name = name;
@@ -37,7 +37,7 @@ public class CreatePersonViewModel
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        ImagePath = imagePath;
+        Avatar = avatar;
 
     }
 }

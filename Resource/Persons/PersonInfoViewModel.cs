@@ -13,9 +13,7 @@ namespace HealthCareApplication.Resource.Persons
         public AddressViewModel Address { get; private set; }
         public decimal Weight { get; private set; }
         public decimal Height { get; private set; }
-        public string ImagePath { get; private set; }
-        public string PhoneNumber { get; private set; }
-
+        public string Avatar { get; private set; }
         public BloodPressureViewModel LastBloodPressure { get; private set; }
         public BloodSugarViewModel LastBloodSugar{ get; private set; }
         public BodyTemperatureViewModel LastBodyTemperature { get; private set; }

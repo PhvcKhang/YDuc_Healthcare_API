@@ -4,7 +4,7 @@ public class BloodSugar
 {
     public string BloodSugarId { get; private set;}
     public decimal Value { get; private set;}
-    public string ImageLink { get; private set; }
+    public string? ImageLink { get; private set; } = null;
     public DateTime Timestamp { get; private set; }
     public Person Person { get; private set; }
 

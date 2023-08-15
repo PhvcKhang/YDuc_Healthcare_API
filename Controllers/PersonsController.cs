@@ -75,5 +75,4 @@ public class PersonsController : Controller
     {
         return await _personService.GetPersonInfo(personId);
     }
-
 }

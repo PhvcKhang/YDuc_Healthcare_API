@@ -6,7 +6,7 @@ public class BloodPressure
     public int Systolic { get; private set; }
     public int Diastolic { get; private set; }
     public int PulseRate { get; private set; }
-    public string ImageLink { get; private set; }
+    public string? ImageLink { get; private set; } = null;
     public DateTime Timestamp { get; private set; }
     public Person Person { get; private set; }
 
