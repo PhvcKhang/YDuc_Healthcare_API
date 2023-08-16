@@ -13,10 +13,10 @@ namespace HealthCareApplication.Resource.Persons
         public AddressViewModel Address { get; private set; }
         public decimal Weight { get; private set; }
         public decimal Height { get; private set; }
-        public string Avatar { get; private set; }
-        public BloodPressureViewModel LastBloodPressure { get; private set; }
-        public BloodSugarViewModel LastBloodSugar{ get; private set; }
-        public BodyTemperatureViewModel LastBodyTemperature { get; private set; }
+        public string? Avatar { get; private set; } = null;
+        public BloodPressureViewModel? LastBloodPressure { get; private set; } = null;
+        public BloodSugarViewModel? LastBloodSugar { get; private set; } = null;
+        public BodyTemperatureViewModel? LastBodyTemperature { get; private set; } = null;
 
     }
 }

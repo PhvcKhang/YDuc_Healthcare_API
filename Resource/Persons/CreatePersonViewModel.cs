@@ -8,7 +8,7 @@ namespace HealthCareApplication.Resource.Persons;
 public class CreatePersonViewModel
 {
     [DataMember]
-    public string PersonId { get; set; }
+    public string PersonId { get; private set; }
     [DataMember]
     public string Name { get; set; }
     [DataMember]
@@ -27,9 +27,8 @@ public class CreatePersonViewModel
     public string Avatar { get; private set; }
 
 
-    public CreatePersonViewModel(string personId, string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
+    public CreatePersonViewModel( string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
-        PersonId = personId;
         Name = name;
         Age = age;
         PersonType = personType;
@@ -38,6 +37,20 @@ public class CreatePersonViewModel
         Height = height;
         PhoneNumber = phoneNumber;
         Avatar = avatar;
+
+        //Create Person ID depending on type
+        switch (personType)
+        {
+            case EPersonType.Doctor:
+                PersonId = "D" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                break;
+            case EPersonType.Patient:
+                PersonId = "P" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                break;
+            case EPersonType.Relative:
+                PersonId = "R" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                break;
+        }
 
     }
 }
