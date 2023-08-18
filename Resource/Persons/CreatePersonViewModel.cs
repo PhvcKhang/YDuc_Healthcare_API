@@ -24,7 +24,7 @@ public class CreatePersonViewModel
     [DataMember]
     public string PhoneNumber { get; private set; }
     [DataMember]
-    public string Avatar { get; private set; }
+    public string? Avatar { get; private set; } = null;
 
 
     public CreatePersonViewModel( string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)

@@ -14,6 +14,7 @@ public class ModelToViewModelProfile : Profile
     {
         CreateMap<Person, PersonViewModel>();
         CreateMap<Person, PersonInfoViewModel>();
+        CreateMap<Person, GetAllPatientsViewModel>();
 
         CreateMap<Address, AddressViewModel>();
 

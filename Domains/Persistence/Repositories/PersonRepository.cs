@@ -35,6 +35,17 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Include(x => x.Patients)
             .FirstOrDefaultAsync(x => x.PersonId == personId);
     }
+    public async Task<List<Person>> GetAllAsync()
+    {
+        return await _context.Persons
+            .Include(x => x.Address)
+            .Include(x => x.BloodPressures.OrderByDescending(x => x.Timestamp))
+            .Include(x => x.BloodSugars.OrderByDescending(x => x.Timestamp))
+            .Include(x => x.BodyTemperatures.OrderByDescending(x => x.Timestamp))
+            .Where(x => x.PersonType == EPersonType.Patient)
+            .ToListAsync();
+
+    }
     public async Task<Person?> GetPersonInfoAsync(string personId)
     {
         return await _context.Persons
@@ -95,4 +106,5 @@ public class PersonRepository : BaseRepository, IPersonRepository
             _context.Addresses.Remove(person.Address);
         }
     }
+
 }

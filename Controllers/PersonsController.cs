@@ -75,4 +75,12 @@ public class PersonsController : Controller
     {
         return await _personService.GetPersonInfo(personId);
     }
+
+    [HttpGet]
+    [Route("AllPatients")]
+    public async Task<List<GetAllPatientsViewModel>> GetAllPatients()
+    {
+        return await _personService.GetAllPatients();
+    }
+
 }

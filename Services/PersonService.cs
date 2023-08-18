@@ -26,6 +26,12 @@ public class PersonService : IPersonService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         return _mapper.Map<PersonViewModel>(person);
     }
+    public async Task<List<GetAllPatientsViewModel>> GetAllPatients()
+    {
+        var patients = await _personRepository.GetAllAsync() ?? throw new ResourceNotFoundException();
+        List<GetAllPatientsViewModel> patientsView = _mapper.Map<List<Person>, List<GetAllPatientsViewModel>>(patients);
+        return patientsView;
+    }
     public async Task<PersonInfoViewModel> GetPersonInfo(string personId)
     {
         var person = await _personRepository.GetPersonInfoAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);

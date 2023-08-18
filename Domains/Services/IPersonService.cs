@@ -6,6 +6,7 @@ namespace HealthCareApplication.Domains.Services;
 public interface IPersonService
 {
     public Task<PersonViewModel> GetPerson(string personId);
+    public Task<List<GetAllPatientsViewModel>> GetAllPatients();
     public Task<PersonInfoViewModel> GetPersonInfo(string personId);
     public Task<bool> CreatePerson(CreatePersonViewModel viewModel);
     public Task<bool> UpdatePerson(string personId, UpdatePersonViewModel viewModel);

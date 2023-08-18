@@ -3,6 +3,8 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Resource.BloodPressure;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace HealthCareApplication.Controllers;
 

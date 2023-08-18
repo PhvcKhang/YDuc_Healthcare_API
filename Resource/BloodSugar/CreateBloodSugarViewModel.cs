@@ -8,7 +8,7 @@ public class CreateBloodSugarViewModel
     [DataMember]
     public decimal Value { get; set; }
     [DataMember]
-    public string ImageLink { get; set; }
+    public string? ImageLink { get; set; } = null;
 
     public CreateBloodSugarViewModel(decimal value, string imageLink)
     {

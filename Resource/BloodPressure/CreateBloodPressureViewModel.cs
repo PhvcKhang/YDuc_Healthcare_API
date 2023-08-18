@@ -12,7 +12,7 @@ public class CreateBloodPressureViewModel
     [DataMember]
     public int PulseRate { get; set; }
     [DataMember]
-    public string ImageLink { get; set; }
+    public string? ImageLink { get; set; } = null;
 
     public CreateBloodPressureViewModel(int systolic, int diastolic, int pulseRate, string imageLink)
     {

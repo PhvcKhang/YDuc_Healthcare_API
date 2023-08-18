@@ -10,7 +10,7 @@ namespace HealthCareApplication.Resource.Persons
     {
         public string Name { get; private set; }
         public int Age { get; private set; }
-        public AddressViewModel Address { get; private set; }
+        public AddressViewModel? Address { get; private set; }
         public decimal Weight { get; private set; }
         public decimal Height { get; private set; }
         public string? Avatar { get; private set; } = null;

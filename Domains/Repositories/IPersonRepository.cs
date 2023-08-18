@@ -6,6 +6,7 @@ public interface IPersonRepository
 {
     public Task<Person> Add(Person person);
     public Task<Person?> GetAsync(string personId);
+    public Task<List<Person>> GetAllAsync();
     public Task<Person?> GetPersonInfoAsync(string personId);
     public Task<List<Person>> GetListByIdAsync(List<string> personIds);
     public Person Update(Person person);
