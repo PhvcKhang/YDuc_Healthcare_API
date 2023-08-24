@@ -5,11 +5,16 @@ using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Extensions.Exceptions;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Doctors;
+
+using System.Collections.Generic;
+
 
 namespace HealthCareApplication.Services;
 
 public class PersonService : IPersonService
 {
+    #region Properties & Constructor
     private readonly IPersonRepository _personRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -20,25 +25,15 @@ public class PersonService : IPersonService
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    #endregion Properties & Constructor
 
+    #region Person
     public async Task<PersonViewModel> GetPerson(string personId)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         return _mapper.Map<PersonViewModel>(person);
     }
-    public async Task<List<GetAllPatientsViewModel>> GetAllPatients()
-    {
-        var patients = await _personRepository.GetAllAsync() ?? throw new ResourceNotFoundException();
-        List<GetAllPatientsViewModel> patientsView = _mapper.Map<List<Person>, List<GetAllPatientsViewModel>>(patients);
-        return patientsView;
-    }
-    public async Task<PersonInfoViewModel> GetPersonInfo(string personId)
-    {
-        var person = await _personRepository.GetPersonInfoAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-        return _mapper.Map<PersonInfoViewModel>(person);
-    }
-
-        public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
+    public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
     {
 
         var person = _mapper.Map<CreatePersonViewModel, Person>(viewModel);
@@ -54,7 +49,7 @@ public class PersonService : IPersonService
 
         person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Avatar);
         _personRepository.Update(person);
-        
+
         return await _unitOfWork.CompleteAsync();
     }
 
@@ -63,4 +58,45 @@ public class PersonService : IPersonService
         await _personRepository.DeleteAsync(personId);
         return await _unitOfWork.CompleteAsync();
     }
+    #endregion Person
+
+    #region Patients
+    public async Task<List<PatientsViewModel>> GetAllPatients()
+    {
+        var patients = await _personRepository.GetAllAsync() ?? throw new ResourceNotFoundException();
+        List<PatientsViewModel> patientsView = _mapper.Map<List<Person>, List<PatientsViewModel>>(patients);
+        return patientsView;
+    }
+    public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
+    {
+        var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.FirstOrDefault());
+        patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.FirstOrDefault());
+        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.FirstOrDefault());
+        return _mapper.Map<PatientInfoViewModel>(patient);
+    }
+    #endregion Patients
+
+    #region Doctor
+    public async Task<DoctorInfoViewModel> GetDoctorInfo(string doctorId)
+    {
+        var doctor = await _personRepository.GetDoctorInfoAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
+        return _mapper.Map<DoctorInfoViewModel>(doctor);
+    }
+    public async Task<List<DoctorsViewModel>?> GetAllDoctors()
+    {
+        var doctors = await _personRepository.GetAllDoctorsAsync() ?? throw new ResourceNotFoundException();
+        return _mapper.Map<List<Person>?,List<DoctorsViewModel>?>(doctors);
+    }
+
+    #endregion Doctor
+
+    public async Task<bool> AddPatientById(string doctorId, string patientId)
+    {
+
+        await _personRepository.AddPatient(doctorId,patientId);
+
+        return await _unitOfWork.CompleteAsync();
+    }
+
 }

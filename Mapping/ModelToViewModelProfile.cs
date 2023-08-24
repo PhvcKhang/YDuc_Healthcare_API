@@ -5,6 +5,7 @@ using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Doctors;
 
 namespace HealthCareApplication.Mapping;
 
@@ -13,8 +14,10 @@ public class ModelToViewModelProfile : Profile
     public ModelToViewModelProfile() 
     {
         CreateMap<Person, PersonViewModel>();
-        CreateMap<Person, PersonInfoViewModel>();
-        CreateMap<Person, GetAllPatientsViewModel>();
+        CreateMap<Person, PatientInfoViewModel>();
+        CreateMap<Person, PatientsViewModel>();
+        CreateMap<Person, DoctorInfoViewModel>();
+        CreateMap<Person, DoctorsViewModel>();
 
         CreateMap<Address, AddressViewModel>();
 

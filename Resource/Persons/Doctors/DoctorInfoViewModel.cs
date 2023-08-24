@@ -4,19 +4,17 @@ using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;
 
-namespace HealthCareApplication.Resource.Persons
+namespace HealthCareApplication.Resource.Persons.Doctors
 {
-    public class PersonInfoViewModel
+    public class DoctorInfoViewModel
     {
+        public string PersonId { get; set; }
         public string Name { get; private set; }
         public int Age { get; private set; }
         public AddressViewModel? Address { get; private set; }
-        public decimal Weight { get; private set; }
-        public decimal Height { get; private set; }
         public string? Avatar { get; private set; } = null;
-        public BloodPressureViewModel? LastBloodPressure { get; private set; } = null;
-        public BloodSugarViewModel? LastBloodSugar { get; private set; } = null;
-        public BodyTemperatureViewModel? LastBodyTemperature { get; private set; } = null;
-
+        public EPersonType PersonType { get; private set; }
+        public string? PhoneNumber { get; private set; }
+        public List<PatientsViewModel>? Patients { get; private set; }
     }
 }

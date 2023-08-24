@@ -21,34 +21,6 @@ public class Person
     public List<BloodSugar> BloodSugars { get; private set; }
     public List<BodyTemperature> BodyTemperatures { get; private set; }
 
-    public BloodPressure? LastBloodPressure
-    {
-        get
-        {
-            if (PersonType == EPersonType.Patient)
-                return BloodPressures.First();
-            else return null;
-        }
-    }
-    public BloodSugar? LastBloodSugar
-    {
-        get
-        {
-            if (PersonType == EPersonType.Patient)
-                return BloodSugars.First();
-            else return null;
-        }
-    }
-    public BodyTemperature? LastBodyTemperature
-    {
-        get
-        {
-            if (PersonType == EPersonType.Patient)
-                return BodyTemperatures.First();
-            else return null;
-        }
-    }
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Person() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

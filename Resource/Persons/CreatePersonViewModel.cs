@@ -42,13 +42,13 @@ public class CreatePersonViewModel
         switch (personType)
         {
             case EPersonType.Doctor:
-                PersonId = "D" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                PersonId = "D" + DateTime.Now.ToString("fffffff") + phoneNumber.Substring(phoneNumber.Length - 10 , 5);
                 break;
             case EPersonType.Patient:
-                PersonId = "P" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                PersonId = "P" + DateTime.Now.ToString("fffffff") + phoneNumber.Substring(phoneNumber.Length - 10 , 5);
                 break;
             case EPersonType.Relative:
-                PersonId = "R" + DateTime.Now.ToString("ss") + phoneNumber.Substring(phoneNumber.Length - 3, 3);
+                PersonId = "R" + DateTime.Now.ToString("fffffff") + phoneNumber.Substring(phoneNumber.Length - 10, 5);
                 break;
         }
 
