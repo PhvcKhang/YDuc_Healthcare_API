@@ -1,8 +1,12 @@
-﻿using HealthCareApplication.Domains.Services;
+﻿using Azure.Core;
+using HealthCareApplication.Domains.Services;
+using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using RestSharp;
 
 namespace HealthCareApplication.Controllers;
 
@@ -12,10 +16,12 @@ public class PersonsController : Controller
 {
     #region Properties & Constructor
     private readonly IPersonService _personService;
+    private readonly OneSignal.OneSignal _OneSignal;
 
     public PersonsController(IPersonService personService)
     {
         _personService = personService;
+        _OneSignal = new OneSignal.OneSignal();
     }
     #endregion Properties & Constructor
 
@@ -87,6 +93,7 @@ public class PersonsController : Controller
     [Route("AllPatients")]
     public async Task<List<PatientsViewModel>> GetAllPatients()
     {
+        //await _OneSignal.PushNotificationAsync();
         return await _personService.GetAllPatients();
     }
     #endregion Patient
@@ -120,4 +127,6 @@ public class PersonsController : Controller
         }
     }
     #endregion Doctor
-}
+
+
+    }
