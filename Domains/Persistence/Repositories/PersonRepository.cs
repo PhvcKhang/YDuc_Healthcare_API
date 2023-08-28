@@ -90,7 +90,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
         }
     }
     #endregion Person
-
     #region Patient
     public async Task<List<Person>> GetAllAsync()
     {
@@ -136,14 +135,8 @@ public class PersonRepository : BaseRepository, IPersonRepository
         //    throw new ResourceNotFoundException(nameof(Person), doctorId);
         //}
 
-        Person? doctor = await _context.Persons
-            .Include(x => x.Patients)
-            .Where(x => x.PersonId == doctorId)
-            .FirstOrDefaultAsync();
-
-        Person? patient = await _context.Persons
-            .Where(x => x.PersonId == patientId)
-            .FirstOrDefaultAsync();
+        Person doctor = await _context.Persons.Include(x => x.Patients).Where(x => x.PersonId == doctorId).FirstOrDefaultAsync();
+        Person patient = await _context.Persons.Where(x => x.PersonId == patientId).FirstOrDefaultAsync();
 
 
         doctor.Patients.Add(patient);

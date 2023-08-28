@@ -15,17 +15,18 @@ public class Person
     public decimal Weight { get; private set; }
     public decimal Height { get; private set; }
     public string PhoneNumber { get; private set; }
-    public EPersonGender Gender { get; private set; }
+    public string? Avatar { get; private set; } = null;
     public List<Person> Patients { get; private set; }
     public List<BloodPressure> BloodPressures { get; private set; }
     public List<BloodSugar> BloodSugars { get; private set; }
     public List<BodyTemperature> BodyTemperatures { get; private set; }
+    public List<Notification> Notifications { get; private set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Person() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public Person(string personId, string name, int age, EPersonType personType, Address address, decimal weight, decimal height, string phoneNumber, EPersonGender gender, List<Person> patients, List<BloodPressure> bloodPressures, List<BloodSugar> bloodSugars, List<BodyTemperature> bodyTemperatures)
+    public Person(string personId, string name, int age, EPersonType personType, Address address, decimal weight, decimal height, string phoneNumber, string avatar, List<Person> patients, List<BloodPressure> bloodPressures, List<BloodSugar> bloodSugars, List<BodyTemperature> bodyTemperatures)
     {
         PersonId = personId;
         Name = name;
@@ -39,11 +40,10 @@ public class Person
         BloodSugars = bloodSugars;
         BodyTemperatures = bodyTemperatures;
         PhoneNumber = phoneNumber;
-        Gender = gender;
-
+        Avatar = avatar;
     }
 
-    public void Update(string name, int age, EPersonType personType, Address address, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public void Update(string name, int age, EPersonType personType, Address address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         Name = name;
         Age = age;
@@ -52,6 +52,6 @@ public class Person
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        Gender = gender;
+        Avatar = avatar;
     }
 }

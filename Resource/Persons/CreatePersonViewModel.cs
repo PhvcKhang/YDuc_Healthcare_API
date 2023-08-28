@@ -24,10 +24,10 @@ public class CreatePersonViewModel
     [DataMember]
     public string PhoneNumber { get; private set; }
     [DataMember]
-    public EPersonGender Gender { get; private set; }
+    public string? Avatar { get; private set; } = null;
 
 
-    public CreatePersonViewModel( string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public CreatePersonViewModel( string name, int age, EPersonType personType, CreateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         Name = name;
         Age = age;
@@ -36,7 +36,7 @@ public class CreatePersonViewModel
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        Gender = gender;
+        Avatar = avatar;
 
         //Create Person ID depending on type
         switch (personType)

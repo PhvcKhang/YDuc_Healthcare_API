@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCareApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230827061051_AddGenderRemoveAvatar")]
-    partial class AddGenderRemoveAvatar
+    [Migration("20230828021741_Notificaiton")]
+    partial class Notificaiton
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,6 +145,32 @@ namespace HealthCareApplication.Migrations
                     b.ToTable("BodyTemperatures");
                 });
 
+            modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
+                {
+                    b.Property<string>("NotificaitonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<string>("Content")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Heading")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("Seen")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SendDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("NotificaitonId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Person", b =>
                 {
                     b.Property<string>("PersonId")
@@ -184,6 +210,21 @@ namespace HealthCareApplication.Migrations
                         .IsUnique();
 
                     b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("NotificationPerson", b =>
+                {
+                    b.Property<string>("NotificationsNotificaitonId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PeoplePersonId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("NotificationsNotificaitonId", "PeoplePersonId");
+
+                    b.HasIndex("PeoplePersonId");
+
+                    b.ToTable("NotificationPerson");
                 });
 
             modelBuilder.Entity("PersonPerson", b =>
@@ -243,6 +284,21 @@ namespace HealthCareApplication.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("NotificationPerson", b =>
+                {
+                    b.HasOne("HealthCareApplication.Domains.Models.Notification", null)
+                        .WithMany()
+                        .HasForeignKey("NotificationsNotificaitonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthCareApplication.Domains.Models.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PeoplePersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PersonPerson", b =>

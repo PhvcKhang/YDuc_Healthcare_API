@@ -22,9 +22,9 @@ public class UpdatePersonViewModel
     [DataMember]
     public string PhoneNumber { get; private set; }
     [DataMember]
-    public EPersonGender Gender { get; private set; }
+    public string? Avatar { get; private set; } = null;
 
-    public UpdatePersonViewModel(string name, int age, EPersonType personType, UpdateAddressViewModel address, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public UpdatePersonViewModel(string name, int age, EPersonType personType, UpdateAddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         Name = name;
         Age = age;
@@ -33,6 +33,6 @@ public class UpdatePersonViewModel
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        Gender = gender;
+        Avatar = avatar;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Resource.Persons;
 
 namespace HealthCareApplication.Domains.Repositories;
 

@@ -14,7 +14,7 @@ namespace HealthCareApplication.Resource.Persons
         public AddressViewModel? Address { get; private set; }
         public decimal Weight { get; private set; }
         public decimal Height { get; private set; }
-        public EPersonGender Gender { get; private set; }
+        public string? Avatar { get; private set; } = null;
         public EPersonType PersonType { get; private set; }
         public string PhoneNumber { get; private set; }
         public List<BloodPressureViewModel>? BloodPressures { get; private set; }

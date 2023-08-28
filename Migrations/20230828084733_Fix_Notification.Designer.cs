@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCareApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230828084733_Fix_Notification")]
+    partial class Fix_Notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,6 @@ namespace HealthCareApplication.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
@@ -97,7 +99,6 @@ namespace HealthCareApplication.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("ImageLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
@@ -125,7 +126,6 @@ namespace HealthCareApplication.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("ImageLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
@@ -148,7 +148,9 @@ namespace HealthCareApplication.Migrations
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
                 {
                     b.Property<string>("NotificaitonId")
-                        .HasColumnType("nvarchar(450)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Content")
                         .HasMaxLength(255)
@@ -157,9 +159,6 @@ namespace HealthCareApplication.Migrations
                     b.Property<string>("Heading")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
                         .HasColumnType("nvarchar(450)");
@@ -188,9 +187,8 @@ namespace HealthCareApplication.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("Avatar")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Height")
                         .HasColumnType("decimal(18,2)");
@@ -205,7 +203,8 @@ namespace HealthCareApplication.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<decimal>("Weight")
                         .HasColumnType("decimal(18,2)");
@@ -268,9 +267,11 @@ namespace HealthCareApplication.Migrations
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
                 {
-                    b.HasOne("HealthCareApplication.Domains.Models.Person", null)
+                    b.HasOne("HealthCareApplication.Domains.Models.Person", "Person")
                         .WithMany("Notifications")
                         .HasForeignKey("PersonId");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Person", b =>

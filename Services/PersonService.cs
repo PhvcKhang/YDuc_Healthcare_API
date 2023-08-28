@@ -47,7 +47,7 @@ public class PersonService : IPersonService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var address = _mapper.Map<Address>(viewModel.Address);
 
-        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Gender);
+        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Avatar);
         _personRepository.Update(person);
 
         return await _unitOfWork.CompleteAsync();
@@ -58,6 +58,8 @@ public class PersonService : IPersonService
         await _personRepository.DeleteAsync(personId);
         return await _unitOfWork.CompleteAsync();
     }
+
+
     #endregion Person
 
     #region Patients
@@ -89,8 +91,6 @@ public class PersonService : IPersonService
         return _mapper.Map<List<Person>?,List<DoctorsViewModel>?>(doctors);
     }
 
-    #endregion Doctor
-
     public async Task<bool> AddPatientById(string doctorId, string patientId)
     {
 
@@ -98,5 +98,5 @@ public class PersonService : IPersonService
 
         return await _unitOfWork.CompleteAsync();
     }
-
+    #endregion Doctor
 }

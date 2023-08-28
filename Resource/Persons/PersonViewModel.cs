@@ -14,9 +14,9 @@ public class PersonViewModel
     public decimal Weight { get; set; }
     public decimal Height { get; set; }
     public string PhoneNumber { get; private set; }
-    public EPersonGender Gender { get; private set; }
+    public string? Avatar { get; private set; } = null; 
 
-    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public PersonViewModel(string personId, string name, int age, EPersonType personType, AddressViewModel address, decimal weight, decimal height, string phoneNumber, string avatar)
     {
         PersonId = personId;
         Name = name;
@@ -26,6 +26,6 @@ public class PersonViewModel
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;
-        Gender = gender;
+        Avatar = avatar;
     }
 }
