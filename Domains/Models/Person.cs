@@ -20,7 +20,6 @@ public class Person
     public List<BloodPressure> BloodPressures { get; private set; }
     public List<BloodSugar> BloodSugars { get; private set; }
     public List<BodyTemperature> BodyTemperatures { get; private set; }
-    public List<Notification> Notifications { get; private set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Person() { }

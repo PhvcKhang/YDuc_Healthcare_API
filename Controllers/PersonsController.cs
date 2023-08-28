@@ -1,11 +1,8 @@
-<<<<<<< HEAD
+
 ﻿using Azure.Core;
 using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
-=======
-﻿using HealthCareApplication.Domains.Services;
->>>>>>> parent of 4f9f2d5 (OneSignal&Gender)
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using MesMicroservice.Api.Application.Messages;
@@ -19,18 +16,14 @@ public class PersonsController : Controller
 {
     #region Properties & Constructor
     private readonly IPersonService _personService;
-<<<<<<< HEAD
+
     private readonly NotificaitonHelper _pushNotification;
-=======
->>>>>>> parent of 4f9f2d5 (OneSignal&Gender)
 
     public PersonsController(IPersonService personService)
     {
         _personService = personService;
-<<<<<<< HEAD
         _pushNotification = new NotificaitonHelper();
-=======
->>>>>>> parent of 4f9f2d5 (OneSignal&Gender)
+
     }
     #endregion Properties & Constructor
 
@@ -136,7 +129,7 @@ public class PersonsController : Controller
         }
     }
     #endregion Doctor
-<<<<<<< HEAD
+
 
     #region Relatives
     //[HttpGet]
@@ -144,6 +137,4 @@ public class PersonsController : Controller
 
     #endregion Relatives
 
-=======
->>>>>>> parent of 4f9f2d5 (OneSignal&Gender)
 }

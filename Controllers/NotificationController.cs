@@ -2,7 +2,6 @@
 using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
-using HealthCareApplication.Resource.Notification;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,42 +13,30 @@ namespace HealthCareApplication.Controllers
     [Route("api/[controller]")]
     public class NotificationController : Controller
     {
-        private readonly INotificationService _notificationService;
         private readonly NotificaitonHelper _notificaitonHelper;
 
-        public NotificationController(INotificationService notificationService, NotificaitonHelper notificaitonHelper)
+        public NotificationController()
         {
-            _notificationService = notificationService;
-            _notificaitonHelper = notificaitonHelper;
-        }
-
-        [HttpGet]
-        [Route("{personId}")]
-        public async Task<List<NotificationViewModel>> GetByPersonId(string personId)
-        {
-            return await _notificationService.GetByPersonId(personId);
+            _notificaitonHelper = new NotificaitonHelper();
         }
         [HttpPost]
         [Route("PushNotification")]
-        public async Task<IActionResult> PushNotificationById([FromBody]string doctorId)
+        public async Task<string> PushNotificationById(string doctorId, string patientId)
         {
-            try
-            {
-                return Ok(await _notificaitonHelper.PushAsync(doctorId));
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = new ErrorMessage(ex);
-                return BadRequest(errorMessage);
-            }
+           var content = "Bệnh nhân " +patientId+ " vừa cập nhật chỉ số";
+           return await _notificaitonHelper.PushAsync(doctorId,content,patientId);
         }
         [HttpGet]
-        [Route("Test")]
-        public async Task<string> Test()
+        [Route("{notificationId}")]
+        public async Task<string> GetById([FromRoute] string notificationId)
         {
-                NotificaitonHelper request = new NotificaitonHelper();
-                
-                return await request.GetAsync();
+              return await _notificaitonHelper.GetByIdAsync(notificationId);
+        }
+        [HttpGet]
+        [Route("All")]
+        public async Task<string> GetAll()
+        {
+            return await _notificaitonHelper.GetAllAsync();
         }
     }
 }
