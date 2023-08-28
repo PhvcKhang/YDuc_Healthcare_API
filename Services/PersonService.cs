@@ -47,7 +47,7 @@ public class PersonService : IPersonService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var address = _mapper.Map<Address>(viewModel.Address);
 
-        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Avatar);
+        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Gender);
         _personRepository.Update(person);
 
         return await _unitOfWork.CompleteAsync();

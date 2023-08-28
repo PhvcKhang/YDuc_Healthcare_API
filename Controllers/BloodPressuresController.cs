@@ -1,5 +1,6 @@
 ﻿using HealthCareApplication.Domains.Models.Queries;
 using HealthCareApplication.Domains.Services;
+using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodPressure;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,13 @@ namespace HealthCareApplication.Controllers;
 public class BloodPressuresController : Controller
 {
     private readonly IBloodPressureService _bloodPressureService;
-
-    public BloodPressuresController(IBloodPressureService bloodPressureService)
+    private readonly INotificationService _notificationService;
+    private readonly NotificationHelper _notificationHelper;
+    public BloodPressuresController(IBloodPressureService bloodPressureService, INotificationService notificationService)
     {
         _bloodPressureService = bloodPressureService;
+        _notificationHelper = new NotificationHelper();
+        _notificationService = notificationService;
     }
 
     [HttpPost]
@@ -26,6 +30,8 @@ public class BloodPressuresController : Controller
         try
         {
             var result = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
+            var notification =  await _notificationHelper.PushAsync(personId);
+            await _notificationService.CreateNotification(notification);
             return Ok(result);
         }
         catch (Exception ex)

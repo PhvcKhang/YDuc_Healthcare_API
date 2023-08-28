@@ -5,17 +5,34 @@ using HealthCareApplication.Domains.Models;
 using OneSignal.RestAPIv3.Client.Resources;
 using Azure.Core;
 using Microsoft.Extensions.Options;
+using OneSignal.RestAPIv3.Client.Resources.Notifications;
+using HealthCareApplication.Domains.Services;
+using HealthCareApplication.Domains.Repositories;
 
 namespace HealthCareApplication.OneSignal
 {
-    public class NotificaitonHelper
+    public class NotificationHelper
     {
-        public NotificaitonHelper()
+        private INotificationRepository _notificationRepository;
+
+        public NotificationHelper(INotificationRepository notificationRepository)
         {
+            _notificationRepository = notificationRepository;
         }
 
-        public async Task<string> PushAsync(string doctorId, string content, string patientId)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public NotificationHelper()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
+
+        }
+
+        public async Task<Notification> PushAsync( string patientId)
+        {
+            //Push Notificaiton to OneSignal
+            var content = "Bệnh nhân " + patientId + " vừa cập nhật chỉ số";
+            var doctorId = "240914";
+
             var options = new RestClientOptions("https://onesignal.com/api/v1/notifications");
             var client = new RestClient(options);
             var request = new RestRequest("");
@@ -26,7 +43,13 @@ namespace HealthCareApplication.OneSignal
 
             var response = await client.PostAsync(request);
 
-            return response.Content.ToString().Substring(7, 36); ;
+            var notificationId = response.Content.ToString().Substring(7, 36); ;
+
+            //Return Notification object 
+            var notification = new Notification(notificationId, content, patientId ,DateTime.Now);
+            //await _notificationRepository.CreateAsync(notification);
+            return notification;
+
         }
         public async Task<string> GetByIdAsync(string notificationId)
         {

@@ -13,19 +13,20 @@ namespace HealthCareApplication.Controllers
     [Route("api/[controller]")]
     public class NotificationController : Controller
     {
-        private readonly NotificaitonHelper _notificaitonHelper;
+        private readonly NotificationHelper _notificaitonHelper;
+        private readonly INotificationService _notificationService;
 
-        public NotificationController()
+        public NotificationController(INotificationService notificationService)
         {
-            _notificaitonHelper = new NotificaitonHelper();
+            _notificaitonHelper = new NotificationHelper();
+            _notificationService = notificationService;
         }
-        [HttpPost]
-        [Route("PushNotification")]
-        public async Task<string> PushNotificationById(string doctorId, string patientId)
-        {
-           var content = "Bệnh nhân " +patientId+ " vừa cập nhật chỉ số";
-           return await _notificaitonHelper.PushAsync(doctorId,content,patientId);
-        }
+        //[HttpPost]
+        //[Route("PushNotification")]
+        //public async Task<bool> PushNotificationById(string doctorId, string patientId)
+        //{
+        //   return await _notificaitonHelper.PushAsync(patientId);
+        //}
         [HttpGet]
         [Route("{notificationId}")]
         public async Task<string> GetById([FromRoute] string notificationId)
@@ -34,9 +35,9 @@ namespace HealthCareApplication.Controllers
         }
         [HttpGet]
         [Route("All")]
-        public async Task<string> GetAll()
+        public async Task<List<Notification>> GetAll()
         {
-            return await _notificaitonHelper.GetAllAsync();
+            return await _notificationService.GetAll();
         }
     }
 }

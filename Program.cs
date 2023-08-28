@@ -38,12 +38,14 @@ builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IBloodPressureRepository, BloodPressureRepository>();
 builder.Services.AddScoped<IBloodSugarRepository, BloodSugarRepository>();
 builder.Services.AddScoped<IBodyTemperatureRepository, BodyTemperatureRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificaitonRepository>();
 
 
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IBloodPressureService, BloodPressureService>();
 builder.Services.AddScoped<IBloodSugarService, BloodSugarService>();
 builder.Services.AddScoped<IBodyTemperatureService, BodyTemperatureService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
 builder.Services.AddAutoMapper(typeof(ModelToViewModelProfile));

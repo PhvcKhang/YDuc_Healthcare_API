@@ -17,12 +17,12 @@ public class PersonsController : Controller
     #region Properties & Constructor
     private readonly IPersonService _personService;
 
-    private readonly NotificaitonHelper _pushNotification;
+    private readonly NotificationHelper _pushNotification;
 
     public PersonsController(IPersonService personService)
     {
         _personService = personService;
-        _pushNotification = new NotificaitonHelper();
+        _pushNotification = new NotificationHelper();
 
     }
     #endregion Properties & Constructor

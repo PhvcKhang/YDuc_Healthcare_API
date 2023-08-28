@@ -14,12 +14,12 @@ namespace HealthCareApplication.Resource.Persons
         public AddressViewModel? Address { get; private set; }
         public decimal Weight { get; private set; }
         public decimal Height { get; private set; }
-        public string? Avatar { get; private set; } = null;
+        public EPersonGender Gender { get; private set; } 
         public EPersonType PersonType { get; private set; }
-        public string PhoneNumber { get; private set; }
+        public string? PhoneNumber { get; private set; }
         public List<BloodPressureViewModel>? BloodPressures { get; private set; }
-        public List<BloodSugarViewModel> BloodSugars { get; private set; }
-        public List<BodyTemperatureViewModel> BodyTemperatures { get; private set; }
+        public List<BloodSugarViewModel>? BloodSugars { get; private set; }
+        public List<BodyTemperatureViewModel>? BodyTemperatures { get; private set; }
 
     }
 }
