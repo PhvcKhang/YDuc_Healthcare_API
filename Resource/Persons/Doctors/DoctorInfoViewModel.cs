@@ -17,6 +17,5 @@ namespace HealthCareApplication.Resource.Persons.Doctors
         public EPersonType PersonType { get; private set; }
         public string? PhoneNumber { get; private set; }
         public List<PatientsViewModel>? Patients { get; private set; }
-        public List<NotificationViewModel> Notifications { get; private set; }
     }
 }

@@ -141,9 +141,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
 
         doctor.Patients.Add(patient);
 
-        _context.Persons.Where(x => x.PersonId == doctorId).ExecuteDelete();
-
-        return _context.Persons.Add(doctor).Entity;
+        return _context.Persons.Update(doctor).Entity;
 
     }
 

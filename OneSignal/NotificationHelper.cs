@@ -48,7 +48,6 @@ namespace HealthCareApplication.OneSignal
 
             //Return Notification object 
             var notification = new Notification(notificationId, content, patientId ,DateTime.Now,doctor);
-            //await _notificationRepository.CreateAsync(notification);
             return notification;
 
         }
