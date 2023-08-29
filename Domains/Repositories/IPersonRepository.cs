@@ -16,4 +16,5 @@ public interface IPersonRepository
     public Task<Person?> GetDoctorInfoAsync(string doctorId);
     public Task<List<Person>?> GetAllDoctorsAsync();
     public Task<Person> AddPatient(string doctorId, string patientId);
+    public Task<Person?> FindByIdAsync(string patientId);
 }

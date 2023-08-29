@@ -4,6 +4,7 @@ using HealthCareApplication.Resource.Addresses;
 using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;
+using HealthCareApplication.Resource.Notification;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 
@@ -21,6 +22,7 @@ public class ModelToViewModelProfile : Profile
 
 
         CreateMap<Address, AddressViewModel>();
+        CreateMap<Notification, NotificationViewModel>();
 
         CreateMap<BloodPressure, BloodPressureViewModel>();
         CreateMap<BloodPressure, BloodPressureMetricViewModel>();

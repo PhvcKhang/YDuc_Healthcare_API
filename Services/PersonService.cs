@@ -98,5 +98,9 @@ public class PersonService : IPersonService
 
         return await _unitOfWork.CompleteAsync();
     }
+    public async Task<Person> FindDoctorByPatientId(string patientId)
+    {
+        return await _personRepository.FindByIdAsync(patientId); 
+    }
     #endregion Doctor
 }

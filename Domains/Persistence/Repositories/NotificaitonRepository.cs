@@ -2,6 +2,7 @@
 using HealthCareApplication.Domains.Persistence.Contexts;
 using HealthCareApplication.Domains.Persistence.Exceptions;
 using HealthCareApplication.Domains.Repositories;
+using HealthCareApplication.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -20,7 +21,9 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             {
                 throw new EntityDuplicationException(nameof(Notification), notification.NotificaitonId);
             }
-            return  _context.Notifications.Add(notification).Entity;
+            //Person doctor = _context.Persons.FirstOrDefault(x => x.PersonId == doctorId);
+
+            return _context.Notifications.Add(notification).Entity;
         }
         public async Task<List<Notification>> GetAllAsync()
         {
@@ -31,6 +34,21 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         {
             return await _context.Notifications
                 .AnyAsync(x => x.NotificaitonId == notificationId);
+        }
+        public async Task<List<Notification>> GetByIdAsync(string doctorId)
+        {
+            return await _context.Notifications
+                .Where(x => x.Doctor.PersonId == doctorId)
+                .ToListAsync();
+        }
+        public Notification ChangeStatusAsync(string notificationId)
+        {
+            var notificaiton =  _context.Notifications
+                                .Where(x => x.NotificaitonId == notificationId)
+                                .FirstOrDefault();
+            notificaiton.Seen = true;
+            return _context.Notifications.Update(notificaiton).Entity;
+
         }
     }
 }

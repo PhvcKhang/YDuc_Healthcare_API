@@ -146,6 +146,20 @@ public class PersonRepository : BaseRepository, IPersonRepository
         return _context.Persons.Add(doctor).Entity;
 
     }
+
+    public async Task<Person?> FindByIdAsync(string patientId)
+    {
+        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId);
+
+        //List<Person> doctors =_context.Persons.Where(x => x.PersonType == EPersonType.Doctor).ToList();
+
+        //var doctor = from d in doctors
+        //             where d.Patients.Contains(patient)
+        //             select d;
+
+        return await _context.Persons
+                .FirstOrDefaultAsync(x => x.Patients.Contains(patient));
+    }
     #endregion Doctor
 
 

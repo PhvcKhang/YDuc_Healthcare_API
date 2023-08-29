@@ -22,5 +22,7 @@ public interface IPersonService
     public Task<DoctorInfoViewModel> GetDoctorInfo(string doctorId);
     public Task<List<DoctorsViewModel>?> GetAllDoctors();
     public Task<bool> AddPatientById(string doctorId,string patientId);
+
+    public Task<Person> FindDoctorByPatientId(string patientId);
     #endregion Doctor
 }

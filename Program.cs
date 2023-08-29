@@ -3,6 +3,7 @@ using HealthCareApplication.Domains.Persistence.Repositories;
 using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Mapping;
+using HealthCareApplication.OneSignal;
 using HealthCareApplication.Services;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,10 @@
-﻿using HealthCareApplication.Domains.Models.Queries;
+﻿using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Domains.Models.Queries;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodPressure;
+using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Doctors;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -15,23 +18,35 @@ public class BloodPressuresController : Controller
 {
     private readonly IBloodPressureService _bloodPressureService;
     private readonly INotificationService _notificationService;
+    private readonly IPersonService _personService;
     private readonly NotificationHelper _notificationHelper;
-    public BloodPressuresController(IBloodPressureService bloodPressureService, INotificationService notificationService)
+    public BloodPressuresController(IBloodPressureService bloodPressureService, INotificationService notificationService, IPersonService personService)
     {
         _bloodPressureService = bloodPressureService;
         _notificationHelper = new NotificationHelper();
         _notificationService = notificationService;
+        _personService = personService;
     }
 
     [HttpPost]
-    [Route("{personId}")]
+    [Route("{personId}")] //P107982209863 - D057298409432
     public async Task<IActionResult> CreateBloodPressure([FromRoute] string personId, [FromBody] CreateBloodPressureViewModel bloodPressure)
     {
         try
         {
+            //Create a new statistic
             var result = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
-            var notification =  await _notificationHelper.PushAsync(personId);
+
+            //Look for the doctor who responsibilizes for this patient 
+            Person doctor = await _personService.FindDoctorByPatientId(personId);
+
+            //Push Notification to Doctor
+            PersonViewModel patient = await _personService.GetPerson(personId);
+            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name);
+
+            //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);
+
             return Ok(result);
         }
         catch (Exception ex)

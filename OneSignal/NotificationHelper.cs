@@ -8,16 +8,17 @@ using Microsoft.Extensions.Options;
 using OneSignal.RestAPIv3.Client.Resources.Notifications;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Domains.Repositories;
+using HealthCareApplication.Resource.Persons;
 
 namespace HealthCareApplication.OneSignal
 {
     public class NotificationHelper
     {
-        private INotificationRepository _notificationRepository;
+        public IPersonService _personService { get; set; }
 
-        public NotificationHelper(INotificationRepository notificationRepository)
+        public NotificationHelper( IPersonService personService)
         {
-            _notificationRepository = notificationRepository;
+            _personService = personService;
         }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -27,11 +28,11 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId)
+        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName)
         {
             //Push Notificaiton to OneSignal
-            var content = "Bệnh nhân " + patientId + " vừa cập nhật chỉ số";
-            var doctorId = "240914";
+            var content = "Bệnh nhân " + patientName + " vừa cập nhật chỉ số";
+            //var doctorId = "240914";
 
             var options = new RestClientOptions("https://onesignal.com/api/v1/notifications");
             var client = new RestClient(options);
@@ -39,14 +40,14 @@ namespace HealthCareApplication.OneSignal
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
 
-            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctorId + "\"}],\"contents\":{\"en\":\""+content+"\",\"es\":\"Spanish Message\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\""+patientId+"\"}}", false);
+            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+content+"\",\"es\":\"Spanish Message\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\""+patientId+"\"}}", false);
 
             var response = await client.PostAsync(request);
 
             var notificationId = response.Content.ToString().Substring(7, 36); ;
 
             //Return Notification object 
-            var notification = new Notification(notificationId, content, patientId ,DateTime.Now);
+            var notification = new Notification(notificationId, content, patientId ,DateTime.Now,doctor);
             //await _notificationRepository.CreateAsync(notification);
             return notification;
 
