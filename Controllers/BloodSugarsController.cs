@@ -1,6 +1,10 @@
-﻿using HealthCareApplication.Domains.Models.Queries;
+﻿using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Domains.Models.Queries;
 using HealthCareApplication.Domains.Services;
+using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodSugar;
+using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Services;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +15,16 @@ namespace HealthCareApplication.Controllers;
 public class BloodSugarsController : Controller
 {
     private readonly IBloodSugarService _bloodSugarService;
+    private readonly IPersonService _personService;
+    private readonly INotificationService _notificationService;
+    private readonly NotificationHelper _notificationHelper;
 
-    public BloodSugarsController(IBloodSugarService bloodSugarService)
+    public BloodSugarsController(IBloodSugarService bloodSugarService, IPersonService personService, INotificationService notificationService)
     {
         _bloodSugarService = bloodSugarService;
+        _personService = personService;
+        _notificationHelper = new NotificationHelper();
+        _notificationService = notificationService;
     }
 
     [HttpPost]
@@ -24,6 +34,19 @@ public class BloodSugarsController : Controller
         try
         {
             var result = await _bloodSugarService.CreateBloodSugar(personId, bloodSugar);
+            //Look for the doctor who responsibilizes for this patient 
+            Person doctor = await _personService.FindDoctorByPatientId(personId);
+
+            //Push Notification to Doctor
+            PersonViewModel patient = await _personService.GetPerson(personId);
+            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
+            //Push Notificaiton to OneSignal
+            var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số đường huyết";
+            var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " blood sugar readings";
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink);
+
+            //Add user-defined sample of this notification to database
+            await _notificationService.CreateNotification(notification);
             return Ok(result);
         }
         catch (Exception ex)

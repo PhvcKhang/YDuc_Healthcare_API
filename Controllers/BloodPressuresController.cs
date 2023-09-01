@@ -42,7 +42,11 @@ public class BloodPressuresController : Controller
 
             //Push Notification to Doctor
             PersonViewModel patient = await _personService.GetPerson(personId);
-            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name);
+            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
+            //Push Notificaiton to OneSignal
+            var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
+            var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
+            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent,bloodPressure.ImageLink);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

@@ -28,10 +28,9 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName)
+        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, string imageUrl)
         {
-            //Push Notificaiton to OneSignal
-            var content = "Bệnh nhân " + patientName + " vừa cập nhật chỉ số";
+
             //var doctorId = "240914";
 
             var options = new RestClientOptions("https://onesignal.com/api/v1/notifications");
@@ -40,14 +39,14 @@ namespace HealthCareApplication.OneSignal
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
 
-            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+content+"\",\"es\":\"Spanish Message\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\""+patientId+"\"}}", false);
+            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+ENcontent+ "\",\"vi\":\""+VIcontent+"\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId+ "\"}, \"headings\":{\"en\":\"Notification\",\"vi\":\"Thông báo\"},\"large_icon\":\""+imageUrl+ "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
 
             var response = await client.PostAsync(request);
 
             var notificationId = response.Content.ToString().Substring(7, 36); ;
 
             //Return Notification object 
-            var notification = new Notification(notificationId, content, patientId ,DateTime.Now,doctor);
+            var notification = new Notification(notificationId, VIcontent, patientId ,DateTime.Now, doctor, patientName);
             return notification;
 
         }

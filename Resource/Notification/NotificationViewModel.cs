@@ -8,7 +8,8 @@ namespace HealthCareApplication.Resource.Notification
         public string NotificaitonId { get; set; }
         public string Heading { get; set; } 
         public string? Content { get; set; }
-        public string? PatietnId { get; set; } 
+        public string PatientId { get; set; } 
+        public string PatientName { get; set; }
         public bool Seen { get; set; } = false;
         public DateTime SendAt { get; set; }
     }

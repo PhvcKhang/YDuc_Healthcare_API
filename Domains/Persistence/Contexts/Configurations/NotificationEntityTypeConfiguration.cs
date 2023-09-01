@@ -12,6 +12,8 @@ namespace HealthCareApplication.Domains.Persistence.Contexts.Configurations
 
             builder.Property(x => x.Heading).HasMaxLength(255);
             builder.Property(x => x.Content).HasMaxLength(255);
+            builder.Property(x => x.PatientId).IsRequired();
+            builder.Property(x => x.PatientName).IsRequired();
         }
     }
 }
