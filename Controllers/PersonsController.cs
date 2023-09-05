@@ -5,6 +5,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Relatives;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
 
@@ -114,12 +115,12 @@ public class PersonsController : Controller
         return await _personService.GetAllDoctors();
     }
     [HttpPost]
-    [Route("{doctorId}/AddPatient/{patientId}")]
-    public async Task<IActionResult> AddPatientById([FromRoute] string doctorId, [FromRoute] string patientId)
+    [Route("{personId}/AddPatient/{patientId}")]
+    public async Task<IActionResult> AddPatientById([FromRoute] string personId, [FromRoute] string patientId)
     {
         try
         {
-            var result = await _personService.AddPatientById(doctorId,patientId);
+            var result = await _personService.AddPatientById(personId,patientId);
             return Ok(result);
         }
         catch (Exception ex)
@@ -130,11 +131,20 @@ public class PersonsController : Controller
     }
     #endregion Doctor
 
-
     #region Relatives
-    //[HttpGet]
-    //[Route("AllRelatives")]
+    [HttpGet]
+    [Route("AllRelatives")]
+    public async Task<List<RelativesViewModel>> GetAllRelatives()
+    {
+        return await _personService.GetAllRelatives();
+    }
 
+    [HttpGet]
+    [Route("RelativeInfo/{relativeId}")]
+    public async Task<RelativeInfoViewModel> GetRelativeById([FromRoute]string relativeId)
+    {
+        return await _personService.GetRelativeById(relativeId);
+    }
     #endregion Relatives
 
 }

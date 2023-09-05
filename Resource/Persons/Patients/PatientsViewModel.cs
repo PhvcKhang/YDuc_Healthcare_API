@@ -10,7 +10,7 @@ namespace HealthCareApplication.Resource.Persons
     {
         public string PersonId { get; set; }
         public string Name { get; set; }
-        public string PhoneNumber { get; private set; }
+        public string PhoneNumber { get; set; }
 
     }
 }

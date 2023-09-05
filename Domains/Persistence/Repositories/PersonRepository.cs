@@ -126,39 +126,46 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonType == EPersonType.Doctor)
             .ToListAsync();
     }
-    public async Task<Person> AddPatient(string doctorId, string patientId)
+    public async Task<Person> AddPatient(string personId, string patientId)
     {
 
-        //var notFound = await _context.Persons.AnyAsync(x => x.PersonId != doctorId || x.PersonId != patientId);
-        //if (notFound is true)
-        //{
-        //    throw new ResourceNotFoundException(nameof(Person), doctorId);
-        //}
+        Person person = await _context.Persons.Include(x => x.Patients).Where(x => x.PersonId == personId).FirstOrDefaultAsync() ?? throw new ResourceNotFoundException(nameof(Person), personId);
 
-        Person doctor = await _context.Persons.Include(x => x.Patients).Where(x => x.PersonId == doctorId).FirstOrDefaultAsync();
-        Person patient = await _context.Persons.Where(x => x.PersonId == patientId).FirstOrDefaultAsync();
+        Person patient = await _context.Persons.Where(x => x.PersonId == patientId).FirstOrDefaultAsync() ?? throw new ResourceNotFoundException(nameof(Person), patientId);
 
 
-        doctor.Patients.Add(patient);
+        person.Patients.Add(patient);
 
-        return _context.Persons.Update(doctor).Entity;
+        return _context.Persons.Update(person).Entity;
 
     }
 
     public async Task<Person?> FindByIdAsync(string patientId)
     {
-        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId);
-
-        //List<Person> doctors =_context.Persons.Where(x => x.PersonType == EPersonType.Doctor).ToList();
-
-        //var doctor = from d in doctors
-        //             where d.Patients.Contains(patient)
-        //             select d;
+        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
 
         return await _context.Persons
                 .FirstOrDefaultAsync(x => x.Patients.Contains(patient));
     }
     #endregion Doctor
+
+    #region Relative
+    public async Task<List<Person>?> GetAllRelativesAsync()
+    {
+        return await _context.Persons
+            .Include(x => x.Patients)
+            .Where(x => x.PersonType == EPersonType.Relative)
+            .ToListAsync();
+    }
+    public async Task<Person?> GetRelativeAsync(string patientId)
+    {
+        return await _context.Persons
+            .Include(x => x.Patients)
+            .Include(x => x.Address)
+            .Where(x => x.PersonId == patientId)
+            .FirstOrDefaultAsync();
+    }
+    #endregion Relative
 
 
 }

@@ -6,7 +6,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Extensions.Exceptions;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
-
+using HealthCareApplication.Resource.Persons.Relatives;
 using System.Collections.Generic;
 
 
@@ -91,16 +91,28 @@ public class PersonService : IPersonService
         return _mapper.Map<List<Person>?,List<DoctorsViewModel>?>(doctors);
     }
 
-    public async Task<bool> AddPatientById(string doctorId, string patientId)
+    public async Task<bool> AddPatientById(string personId, string patientId)
     {
 
-        await _personRepository.AddPatient(doctorId,patientId);
+        await _personRepository.AddPatient(personId,patientId);
 
         return await _unitOfWork.CompleteAsync();
     }
     public async Task<Person> FindDoctorByPatientId(string patientId)
     {
-        return await _personRepository.FindByIdAsync(patientId); 
+        return await _personRepository.FindByIdAsync(patientId) ?? throw new ResourceNotFoundException(); 
     }
     #endregion Doctor
+    #region Relative
+    public async Task<List<RelativesViewModel>> GetAllRelatives()
+    {
+        var relatives = await _personRepository.GetAllRelativesAsync() ?? throw new ResourceNotFoundException();
+        return _mapper.Map<List<Person>,List<RelativesViewModel>>(relatives);
+    }
+    public async Task<RelativeInfoViewModel> GetRelativeById(string relativeId)
+    {
+        var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
+        return _mapper.Map<RelativeInfoViewModel>(relative);
+    }
+    #endregion Relative
 }

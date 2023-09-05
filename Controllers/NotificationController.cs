@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.Notification;
 using MesMicroservice.Api.Application.Messages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -36,12 +37,13 @@ namespace HealthCareApplication.Controllers
             return await _notificationService.GetByDoctorId(doctorId);
         }
         [HttpPut]
-        [Route("{notificationId}/seen")]
+        [Route("{notificationId}")]
         public async Task<IActionResult> ChangeStatus( [FromRoute] string notificationId)
         {
             try
             {
-                return Ok(await _notificationService.ChangeStatus(notificationId));
+                var result = await _notificationService.ChangeStatus(notificationId);
+                return Ok(result);
             }
             catch(Exception ex)
             {

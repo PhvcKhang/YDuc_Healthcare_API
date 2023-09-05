@@ -36,14 +36,15 @@ namespace HealthCareApplication.OneSignal
             var options = new RestClientOptions("https://onesignal.com/api/v1/notifications");
             var client = new RestClient(options);
             var request = new RestRequest("");
+
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
 
-            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+ENcontent+ "\",\"vi\":\""+VIcontent+"\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId+ "\"}, \"headings\":{\"en\":\"Notification\",\"vi\":\"Thông báo\"},\"large_icon\":\""+imageUrl+ "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+ENcontent+ "\",\"vi\":\""+VIcontent+"\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\""+ patientId+ "\"},\"large_icon\":\""+imageUrl+"\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
 
             var response = await client.PostAsync(request);
 
-            var notificationId = response.Content.ToString().Substring(7, 36); ;
+            var notificationId = response.Content?.ToString().Substring(7, 36); ;
 
             //Return Notification object 
             var notification = new Notification(notificationId, VIcontent, patientId ,DateTime.Now, doctor, patientName);

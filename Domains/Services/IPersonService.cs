@@ -1,6 +1,7 @@
 ﻿using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Relatives;
 
 namespace HealthCareApplication.Domains.Services;
 
@@ -21,8 +22,14 @@ public interface IPersonService
     #region Doctor
     public Task<DoctorInfoViewModel> GetDoctorInfo(string doctorId);
     public Task<List<DoctorsViewModel>?> GetAllDoctors();
-    public Task<bool> AddPatientById(string doctorId,string patientId);
+    public Task<bool> AddPatientById(string personId,string patientId);
 
     public Task<Person> FindDoctorByPatientId(string patientId);
     #endregion Doctor
+
+    #region Relative
+    public Task<List<RelativesViewModel>> GetAllRelatives();
+    public Task<RelativeInfoViewModel> GetRelativeById(string relativeId);
+
+    #endregion Relative
 }

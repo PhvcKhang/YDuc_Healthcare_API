@@ -7,6 +7,7 @@ using HealthCareApplication.Resource.BodyTemperature;
 using HealthCareApplication.Resource.Notification;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Relatives;
 
 namespace HealthCareApplication.Mapping;
 
@@ -19,6 +20,8 @@ public class ModelToViewModelProfile : Profile
         CreateMap<Person, PatientsViewModel>();
         CreateMap<Person, DoctorInfoViewModel>();
         CreateMap<Person, DoctorsViewModel>();
+        CreateMap<Person, RelativesViewModel>();
+        CreateMap<Person, RelativeInfoViewModel>();
 
 
         CreateMap<Address, AddressViewModel>();
