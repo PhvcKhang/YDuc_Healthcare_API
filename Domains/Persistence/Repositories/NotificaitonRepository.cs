@@ -28,7 +28,9 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         public async Task<List<Notification>> GetAllAsync()
         {
             return await _context.Notifications
+                .OrderByDescending(x => x.SendAt)
                 .ToListAsync();
+
         }
         public async Task<bool> ExistsAsync(string notificationId)
         {
@@ -39,6 +41,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         {
             return await _context.Notifications
                 .Where(x => x.Doctor.PersonId == doctorId)
+                .OrderByDescending(x => x.SendAt)
                 .ToListAsync();
         }
         public Notification ChangeStatusAsync(string notificationId)

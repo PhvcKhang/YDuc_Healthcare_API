@@ -8,7 +8,7 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Relatives;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 
 namespace HealthCareApplication.Services;
 
@@ -71,11 +71,16 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
+        var watch = new Stopwatch();
+        watch.Start();
         var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.FirstOrDefault());
         patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.FirstOrDefault());
-        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.FirstOrDefault());
-        return _mapper.Map<PatientInfoViewModel>(patient);
+        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.FirstOrDefault());    
+        var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
+        watch.Stop();
+        Console.WriteLine(watch.ElapsedMilliseconds);
+        return viewModel;
     }
     #endregion Patients
 

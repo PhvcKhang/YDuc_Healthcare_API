@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System;
+using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace HealthCareApplication.Domains.Persistence.Repositories;
@@ -102,9 +103,9 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
         return await _context.Persons
         .Include(x => x.Address)
-        .Include(x => x.BloodPressures.OrderByDescending(x => x.Timestamp))
-        .Include(x => x.BloodSugars.OrderByDescending(x => x.Timestamp))
-        .Include(x => x.BodyTemperatures.OrderByDescending(x => x.Timestamp))
+        .Include(x => x.BloodPressures)
+        .Include(x => x.BloodSugars)
+        .Include(x => x.BodyTemperatures)
         .FirstOrDefaultAsync(x => x.PersonId == patientId);
     }
 

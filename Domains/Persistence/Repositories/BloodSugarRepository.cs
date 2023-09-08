@@ -47,6 +47,7 @@ public class BloodSugarRepository : BaseRepository, IBloodSugarRepository
             .Where(x => x.Person.PersonId == personId
                 && x.Timestamp >= timeQuery.StartTime
                 && x.Timestamp <= timeQuery.EndTime)
+            .OrderByDescending(x => x.Timestamp)
             .ToListAsync();
     }
 

@@ -141,7 +141,7 @@ public class PersonsController : Controller
 
     [HttpGet]
     [Route("RelativeInfo/{relativeId}")]
-    public async Task<RelativeInfoViewModel> GetRelativeById([FromRoute]string relativeId)
+    public async Task<RelativeInfoViewModel> GetRelativeById( [FromRoute]string relativeId)
     {
         return await _personService.GetRelativeById(relativeId);
     }
