@@ -77,12 +77,8 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
+
         var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-
-        patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefault());
-        patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefault());
-        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefault());
-
         var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
         return viewModel;
     }
