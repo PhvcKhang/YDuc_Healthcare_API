@@ -33,10 +33,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<Person?> GetAsync(string personId)
     {
         return await _context.Persons
-            //.Include(x => x.BloodPressures)
-            //.Include(x => x.BloodSugars)
-            //.Include(x => x.BodyTemperatures)
-            //.Include(x => x.Patients)
             .FirstOrDefaultAsync(x => x.PersonId == personId);
     }
 
@@ -73,6 +69,16 @@ public class PersonRepository : BaseRepository, IPersonRepository
         return await _context.Persons
             .AnyAsync(x => x.PersonId == personId);
     }
+
+    public async Task<Person> RemoveRelationshipAsync (string personId, string patientId)
+    {
+        Person person = await _context.Persons.Include(x => x.Patients).FirstOrDefaultAsync(x => x.PersonId == personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
+        Person patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        person.Patients.Remove(patient);
+        return _context.Persons
+            .Update(person)
+            .Entity;
+    }
     public async Task DeleteAsync(string personId)
     {
         var person = await _context.Persons
@@ -97,14 +103,23 @@ public class PersonRepository : BaseRepository, IPersonRepository
     }
     public async Task<Person?> GetPatientInfoAsync(string patientId)
     {
-        return await _context.Persons
+        var person = await _context.Persons
         .Include(x => x.BloodPressures)
         .Include(x => x.BloodSugars)
         .Include(x => x.BodyTemperatures)
         .FirstOrDefaultAsync(x => x.PersonId == patientId);
+        return person;
 
     }
+    public Person AddPatient(string relativeId, string patientId)
+    {
+        Person relative = _context.Persons.Include(x => x.Patients).FirstOrDefault(x => x.PersonId == relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
 
+        Person patient = _context.Persons.FirstOrDefault(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        relative.Patients.Add(patient);
+
+        return _context.Persons.Update(relative).Entity;
+    }
 
     #endregion Patient
 
@@ -121,7 +136,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonType == EPersonType.Doctor)
             .ToListAsync();
     }
-    public async Task<Person> AddPatient(string personId, string patientId)
+    public async Task<Person> AddPatientAsync(string personId, string patientId)
     {
 
         Person person = await _context.Persons.Include(x => x.Patients).FirstOrDefaultAsync(x => x.PersonId == personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
@@ -159,6 +174,8 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonId == patientId)
             .FirstOrDefaultAsync();
     }
+
+
     #endregion Relative
 
 

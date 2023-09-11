@@ -39,9 +39,11 @@ public class BodyTemperaturesController : Controller
             //Push Notification to Doctor
             PersonViewModel patient = await _personService.GetPerson(personId);
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
+
             //Push Notificaiton to OneSignal
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số thân nhiệt";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " body temperature readings";
+
             var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature.ImageLink);
 
             //Add user-defined sample of this notification to database

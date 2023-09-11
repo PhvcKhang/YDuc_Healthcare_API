@@ -6,6 +6,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Extensions.Exceptions;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,6 +60,12 @@ public class PersonService : IPersonService
     }
 
 
+    public async Task<bool> RemoveRelationship(string personId, string patientId)
+    {
+        await _personRepository.RemoveRelationshipAsync(personId,patientId);
+        return await _unitOfWork.CompleteAsync();
+    }
+
     #endregion Person
 
     #region Patients
@@ -71,11 +78,34 @@ public class PersonService : IPersonService
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
         var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+
         patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefault());
         patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefault());
-        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefault());    
+        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefault());
+
         var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
         return viewModel;
+    }
+    public async Task<Credential> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
+    {
+        //Look for patient entity
+        var relative = _mapper.Map<AddNewRelativeViewModel, Person>(addNewRelativeViewModel);
+
+        //Create new relative
+        await _personRepository.Add(relative);
+        await _unitOfWork.CompleteAsync();
+
+        //Create relationship between patient and relative
+        await _personRepository.AddPatientAsync(relative.PersonId, patientId);
+        await _unitOfWork.CompleteAsync();
+
+        //Create Username and Password
+        var username = relative.PhoneNumber;
+        var password = relative.PhoneNumber;
+
+        Credential credential = new Credential(username, password);
+
+        return credential;
     }
     #endregion Patients
 
@@ -94,7 +124,7 @@ public class PersonService : IPersonService
     public async Task<bool> AddPatientById(string personId, string patientId)
     {
 
-        await _personRepository.AddPatient(personId,patientId);
+        await _personRepository.AddPatientAsync(personId,patientId);
 
         return await _unitOfWork.CompleteAsync();
     }
@@ -114,5 +144,6 @@ public class PersonService : IPersonService
         var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
         return _mapper.Map<RelativeInfoViewModel>(relative);
     }
+
     #endregion Relative
 }

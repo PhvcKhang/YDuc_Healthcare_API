@@ -12,12 +12,14 @@ public interface IPersonRepository
     public Person Update(Person person);
     public Task DeleteAsync(string personId);
     public Task<bool> ExistsAsync(string personId);
+    public Task<Person> RemoveRelationshipAsync(string personId, string patientId);
     #endregion Person
 
     #region Patient
     public Task<List<Person>> GetAllAsync();
     public Task<Person?> GetPatientInfoAsync(string personId);
-    public Task<Person> AddPatient(string personId, string patientId);
+    public Task<Person> AddPatientAsync(string personId, string patientId);
+    public Person AddPatient(string relativeId, string patientId);
     #endregion Patient
 
     #region Doctor

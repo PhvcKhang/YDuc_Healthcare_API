@@ -5,9 +5,12 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace HealthCareApplication.Controllers;
 
@@ -86,7 +89,7 @@ public class PersonsController : Controller
         #endregion Person
     
     #region Patient
-        [HttpGet]
+    [HttpGet]
     [Route("PatientInfo/{patientId}")]
     public async Task<PatientInfoViewModel> GetPatientInfo([FromRoute] string patientId)
     {
@@ -98,6 +101,28 @@ public class PersonsController : Controller
     public async Task<List<PatientsViewModel>> GetAllPatients()
     {
         return await _personService.GetAllPatients();
+    }
+
+    [HttpPost]
+    [Route("{patientId}/AddNewRelative")]
+    public async Task<Credential> AddNewRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
+    {
+        return await _personService.AddNewRelative(addNewRelativeViewModel, patientId);
+    }
+
+    [HttpPut]
+    [Route("{personId}/RemoveRelationship/{patientId}")]
+    public async Task<IActionResult> RemoveRelationship([FromRoute] string personId, [FromRoute] string patientId)
+    {
+        try
+        {
+            var result = await _personService.RemoveRelationship(personId, patientId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     #endregion Patient
 

@@ -40,9 +40,11 @@ public class BloodSugarsController : Controller
             //Push Notification to Doctor
             PersonViewModel patient = await _personService.GetPerson(personId);
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
+
             //Push Notificaiton to OneSignal
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số đường huyết";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " blood sugar readings";
+
             var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink);
 
             //Add user-defined sample of this notification to database

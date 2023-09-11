@@ -34,8 +34,6 @@ public class BloodPressuresController : Controller
     {
         try
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             //Create a new statistic
             var result = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
@@ -50,13 +48,12 @@ public class BloodPressuresController : Controller
             //Push Notificaiton to OneSignal
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
             var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
+
             var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent,bloodPressure.ImageLink);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);
 
-            stopwatch.Stop();
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
             return Ok(result);
         }
