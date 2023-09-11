@@ -49,6 +49,12 @@ namespace HealthCareApplication.Controllers
             {
                 return BadRequest(ex.Message);
             }
-         } 
+         }
+        [HttpGet]
+        [Route("{doctorId}/Unseen")]
+        public async Task<int> UnseenNotifications([FromRoute]string doctorId)
+        {
+            return await _notificationService.GetUnseenNotifications(doctorId);
+        }
     }
 }

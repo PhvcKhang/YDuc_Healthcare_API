@@ -8,5 +8,6 @@ namespace HealthCareApplication.Domains.Repositories
         Task<List<Notification>> GetAllAsync();
         Task<List<Notification>> GetByIdAsync(string doctorId);
         Notification ChangeStatusAsync(string notificationId);
+        Task<int> GetUnseenNotificationsAsync(string doctorId);
     }
 }

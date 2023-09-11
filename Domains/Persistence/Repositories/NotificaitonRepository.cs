@@ -53,5 +53,13 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             return _context.Notifications.Update(notificaiton).Entity;
 
         }
+
+        public async Task<int> GetUnseenNotificationsAsync(string doctorId)
+        {
+            var notifications = await _context.Notifications.Where(x => x.Doctor.PersonId == doctorId).ToListAsync();
+            notifications.RemoveAll(x => x.Seen ==  true);
+            var unseenCounter = notifications.Count();
+            return unseenCounter;
+        }
     }
 }

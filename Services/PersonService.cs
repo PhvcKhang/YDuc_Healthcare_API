@@ -45,9 +45,8 @@ public class PersonService : IPersonService
     public async Task<bool> UpdatePerson(string personId, UpdatePersonViewModel viewModel)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-        var address = _mapper.Map<Address>(viewModel.Address);
 
-        person.Update(viewModel.Name, viewModel.Age, viewModel.PersonType, address, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Gender);
+        person.Update(viewModel.Name, viewModel.Age, viewModel.Address, viewModel.PersonType, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Gender);
         _personRepository.Update(person);
 
         return await _unitOfWork.CompleteAsync();
@@ -71,15 +70,11 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
-        var watch = new Stopwatch();
-        watch.Start();
         var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.FirstOrDefault());
-        patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.FirstOrDefault());
-        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.FirstOrDefault());    
+        patient.BloodPressures.RemoveAll(x => x != patient.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefault());
+        patient.BloodSugars.RemoveAll(x => x != patient.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefault());
+        patient.BodyTemperatures.RemoveAll(x => x != patient.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefault());    
         var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
-        watch.Stop();
-        Console.WriteLine(watch.ElapsedMilliseconds);
         return viewModel;
     }
     #endregion Patients

@@ -7,7 +7,6 @@ namespace HealthCareApplication.Domains.Persistence.Contexts;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Person> Persons { get; set; }
-    public DbSet<Address> Addresses { get; set; }
     public DbSet<BloodPressure> BloodPressures { get; set; }
     public DbSet<BloodSugar> BloodSugars { get; set; }
     public DbSet<BodyTemperature> BodyTemperatures { get; set; }
@@ -18,7 +17,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new PersonEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new AddressEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BloodPressureEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BloodSugarEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BodyTemperatureEntityTypeConfiguration());

@@ -12,7 +12,6 @@ namespace HealthCareApplication.Domains.Models
         public Person? Doctor { get; set; } //receiver
         public bool Seen { get; set; } = false;
         public DateTime SendAt { get; set; }
-
         public Notification(string notificaitonId, string? content, string patientId, DateTime sendAt, Person doctor, string patientName)
         {
             NotificaitonId = notificaitonId;

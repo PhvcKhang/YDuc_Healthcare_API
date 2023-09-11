@@ -33,18 +33,16 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<Person?> GetAsync(string personId)
     {
         return await _context.Persons
-            .Include(x => x.Address)
-            .Include(x => x.BloodPressures)
-            .Include(x => x.BloodSugars)
-            .Include(x => x.BodyTemperatures)
-            .Include(x => x.Patients)
+            //.Include(x => x.BloodPressures)
+            //.Include(x => x.BloodSugars)
+            //.Include(x => x.BodyTemperatures)
+            //.Include(x => x.Patients)
             .FirstOrDefaultAsync(x => x.PersonId == personId);
     }
 
     public async Task<List<Person>> GetListByIdAsync(List<string> personIds)
     {
         var persons = await _context.Persons
-            .Include(x => x.Address)
             .Include(x => x.BloodPressures)
             .Include(x => x.BloodSugars)
             .Include(x => x.BodyTemperatures)
@@ -78,7 +76,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task DeleteAsync(string personId)
     {
         var person = await _context.Persons
-            .Include(x => x.Address)
             .Include(x => x.BloodPressures)
             .Include(x => x.BloodSugars)
             .Include(x => x.BodyTemperatures)
@@ -87,7 +84,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
         if (person is not null)
         {
             _context.Persons.Remove(person);
-            _context.Addresses.Remove(person.Address);
         }
     }
     #endregion Person
@@ -102,11 +98,11 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<Person?> GetPatientInfoAsync(string patientId)
     {
         return await _context.Persons
-        .Include(x => x.Address)
         .Include(x => x.BloodPressures)
         .Include(x => x.BloodSugars)
         .Include(x => x.BodyTemperatures)
         .FirstOrDefaultAsync(x => x.PersonId == patientId);
+
     }
 
 
@@ -117,9 +113,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
         return await _context.Persons
             .Include(x => x.Patients)
-            .Include(x => x.Address)
-            .Where(x => x.PersonId == doctorId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(x => x.PersonId == doctorId);
     }
     public async Task<List<Person>?> GetAllDoctorsAsync()
     {
@@ -130,9 +124,9 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<Person> AddPatient(string personId, string patientId)
     {
 
-        Person person = await _context.Persons.Include(x => x.Patients).Where(x => x.PersonId == personId).FirstOrDefaultAsync() ?? throw new ResourceNotFoundException(nameof(Person), personId);
+        Person person = await _context.Persons.Include(x => x.Patients).FirstOrDefaultAsync(x => x.PersonId == personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
 
-        Person patient = await _context.Persons.Where(x => x.PersonId == patientId).FirstOrDefaultAsync() ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        Person patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
 
 
         person.Patients.Add(patient);
@@ -162,7 +156,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
         return await _context.Persons
             .Include(x => x.Patients)
-            .Include(x => x.Address)
             .Where(x => x.PersonId == patientId)
             .FirstOrDefaultAsync();
     }

@@ -41,5 +41,10 @@ namespace HealthCareApplication.Services
              _notificationRepository.ChangeStatusAsync(notificationId);
             return await _unitOfWork.CompleteAsync();
         }
+
+        public Task<int> GetUnseenNotifications(string doctorId)
+        {
+            return _notificationRepository.GetUnseenNotificationsAsync(doctorId);
+        }
     }
 }

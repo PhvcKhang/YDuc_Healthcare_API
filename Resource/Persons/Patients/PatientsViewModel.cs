@@ -1,5 +1,4 @@
 ﻿using HealthCareApplication.Domains.Models;
-using HealthCareApplication.Resource.Addresses;
 using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;

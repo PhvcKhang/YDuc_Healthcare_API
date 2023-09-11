@@ -9,10 +9,9 @@ public class Person
     public string PersonId { get; private set; }
     public string Name { get; private set; }
     public int Age { get; private set; }
+    public string Address { get; private set; }
     public EPersonType PersonType { get; private set; }
     public EPersonGender Gender { get; private set; }
-    public Address Address { get; private set; }
-    public int AddressId { get; private set; }
     public decimal Weight { get; private set; }
     public decimal Height { get; private set; }
     public string PhoneNumber { get; private set; }
@@ -26,7 +25,7 @@ public class Person
     private Person() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public Person(string personId, string name, int age, EPersonType personType,EPersonGender gender, Address address, decimal weight, decimal height, string phoneNumber, string avatar, List<Person> patients, List<BloodPressure> bloodPressures, List<BloodSugar> bloodSugars, List<BodyTemperature> bodyTemperatures)
+    public Person(string personId, string name, int age, string address, EPersonType personType,EPersonGender gender, decimal weight, decimal height, string phoneNumber, List<Person> patients, List<BloodPressure> bloodPressures, List<BloodSugar> bloodSugars, List<BodyTemperature> bodyTemperatures)
     {
         PersonId = personId;
         Name = name;
@@ -43,12 +42,12 @@ public class Person
         Gender = gender;
     }
 
-    public void Update(string name, int age, EPersonType personType, Address address, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public void Update(string name, int age, string address, EPersonType personType, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
     {
         Name = name;
         Age = age;
+        Address = address;
         PersonType = personType;
-        Address.Update(address);
         Weight = weight;
         Height = height;
         PhoneNumber = phoneNumber;

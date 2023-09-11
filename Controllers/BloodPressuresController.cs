@@ -34,15 +34,19 @@ public class BloodPressuresController : Controller
     {
         try
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             //Create a new statistic
             var result = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
 
             //Look for the doctor who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
 
-            //Push Notification to Doctor
+            //Look for the patient
             PersonViewModel patient = await _personService.GetPerson(personId);
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
+    
             //Push Notificaiton to OneSignal
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
             var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
@@ -50,6 +54,9 @@ public class BloodPressuresController : Controller
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);
+
+            stopwatch.Stop();
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
             return Ok(result);
         }
