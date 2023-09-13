@@ -15,7 +15,8 @@ public class Person
     public decimal Weight { get; private set; }
     public decimal Height { get; private set; }
     public string PhoneNumber { get; private set; }
-    public List<Person> Patients { get; private set; }
+    public List<Person> Relatives { get; private set; } 
+    public List<Person> Patients { get; private set; } 
     public List<BloodPressure> BloodPressures { get; private set; }
     public List<BloodSugar> BloodSugars { get; private set; }
     public List<BodyTemperature> BodyTemperatures { get; private set; }

@@ -104,15 +104,17 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<Person?> GetPatientInfoAsync(string patientId)
     {
         var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        //var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient)).ToListAsync();
-
+ 
         var lastBloodPressure = await _context.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBloodSugar = await _context.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBodyTemperature = await _context.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
 
-        patient.BloodPressures.RemoveAll(x => x != lastBloodPressure);
-        patient.BloodSugars.RemoveAll(x => x != lastBloodSugar);
-        patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
+        if (patient.BloodPressures is not null && patient.BloodSugars is not null && patient.BodyTemperatures is not null)
+        {
+            patient.BloodPressures.RemoveAll(x => x != lastBloodPressure);
+            patient.BloodSugars.RemoveAll(x => x != lastBloodSugar);
+            patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
+        }
 
         return patient;
 

@@ -27,6 +27,7 @@ public interface IPersonService
     public Task<List<DoctorsViewModel>?> GetAllDoctors();
     public Task<bool> AddPatientById(string personId,string patientId);
     public Task<Person> FindDoctorByPatientId(string patientId);
+    public Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId);
     #endregion Doctor
 
     #region Relative

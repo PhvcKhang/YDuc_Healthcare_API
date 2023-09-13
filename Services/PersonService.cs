@@ -77,7 +77,6 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
-
         var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
         return viewModel;
@@ -127,6 +126,27 @@ public class PersonService : IPersonService
     public async Task<Person> FindDoctorByPatientId(string patientId)
     {
         return await _personRepository.FindByIdAsync(patientId) ?? throw new ResourceNotFoundException(); 
+    }
+
+    public async Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
+    {
+        var patient = _mapper.Map<AddNewPatientViewModel,Person>(addNewPatientViewModel);
+
+        //Create new relative
+        await _personRepository.Add(patient);
+        await _unitOfWork.CompleteAsync();
+
+        //Create relationship between patient and relative
+        await _personRepository.AddPatientAsync(doctorId, patient.PersonId);
+        await _unitOfWork.CompleteAsync();
+
+        //Create Username and Password
+        var username = patient.PhoneNumber;
+        var password = patient.PhoneNumber;
+
+        Credential credential = new Credential(username, password);
+
+        return credential;
     }
     #endregion Doctor
     #region Relative

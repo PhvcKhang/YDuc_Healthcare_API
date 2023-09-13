@@ -133,12 +133,14 @@ public class PersonsController : Controller
     {
         return await _personService.GetDoctorInfo(doctorId);
     }
+
     [HttpGet]
     [Route("AllDoctors")]
     public async Task<List<DoctorsViewModel>?> GetAllDoctors()
     {
         return await _personService.GetAllDoctors();
     }
+    
     [HttpPost]
     [Route("{personId}/AddPatient/{patientId}")]
     public async Task<IActionResult> AddPatientById([FromRoute] string personId, [FromRoute] string patientId)
@@ -153,6 +155,13 @@ public class PersonsController : Controller
             var errorMessage = new ErrorMessage(ex);
             return BadRequest(errorMessage);
         }
+    }
+
+    [HttpPost]
+    [Route("{doctorId}/AddNewPatient")]
+    public async Task<Credential> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
+    {
+            return await _personService.AddNewPatient(addNewPatientViewModel, doctorId);
     }
     #endregion Doctor
 

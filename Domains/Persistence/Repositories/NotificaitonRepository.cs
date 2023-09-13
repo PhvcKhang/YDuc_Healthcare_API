@@ -39,10 +39,12 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         }
         public async Task<List<Notification>> GetByIdAsync(string doctorId)
         {
-            return await _context.Notifications
+
+            var notificaitons = await _context.Notifications
                 .Where(x => x.Doctor.PersonId == doctorId)
-                .OrderByDescending(x => x.SendAt)
                 .ToListAsync();
+            notificaitons.OrderByDescending(x => x.SendAt);
+            return notificaitons;
         }
         public Notification ChangeStatusAsync(string notificationId)
         {
