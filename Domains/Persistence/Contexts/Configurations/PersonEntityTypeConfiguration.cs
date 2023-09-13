@@ -22,11 +22,5 @@ public class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Person>
         builder.HasMany(x => x.BodyTemperatures).WithOne(x => x.Person);
         builder.HasMany(x => x.Notifications).WithOne(x => x.Doctor);
         builder.HasMany(x => x.Patients).WithMany();
-        //builder.HasMany(x => x.Relatives).WithMany(x => x.Patients)
-        //    .UsingEntity<PatientRelative>(
-        //    l => l.HasOne(x => x.Patient).WithMany().HasForeignKey(x => x.PatientId),
-        //    r => r.HasOne(x => x.Relative).WithMany().HasForeignKey(x => x.RelativeId)
-        //    );
-
     }
 }

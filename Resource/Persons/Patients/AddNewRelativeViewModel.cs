@@ -13,25 +13,29 @@ namespace HealthCareApplication.Resource.Persons.Patients
         [DataMember]
         public string Name { get; private set; }
         [DataMember]
+        [JsonIgnore]
         public int Age { get; private set; }
         [DataMember]
+        [JsonIgnore]
         public string Address { get; private set; }
+        [DataMember]
         [JsonIgnore]
         public EPersonType PersonType { get; private set; }
         [DataMember]
         public string PhoneNumber { get; private set; }
         [DataMember]
+        [JsonIgnore]
         public EPersonGender Gender { get; private set; }
 
-        public AddNewRelativeViewModel( string name, int age, string address, string phoneNumber, EPersonGender gender)
+        public AddNewRelativeViewModel( string name, string phoneNumber)
         {
             PersonId = "R" + DateTime.Now.ToString("fffffff") + phoneNumber.Substring(phoneNumber.Length - 10, 5);
             Name = name;
-            Age = age;
-            Address = address;
+            Age = 0;
+            Address = "Unkown";
             PersonType = EPersonType.Relative;
             PhoneNumber = phoneNumber;
-            Gender = gender;
+            Gender = EPersonGender.Unkown;
         }
     }
 }

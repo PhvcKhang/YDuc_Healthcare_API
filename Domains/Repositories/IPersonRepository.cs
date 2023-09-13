@@ -17,7 +17,7 @@ public interface IPersonRepository
 
     #region Patient
     public Task<List<Person>> GetAllAsync();
-    public Task<Person?> GetPatientInfoAsync(string personId);
+    public Task<List<Person>> GetPatientInfoAsync(string personId);
     public Task<Person> AddPatientAsync(string personId, string patientId);
     public Person AddPatient(string relativeId, string patientId);
     #endregion Patient

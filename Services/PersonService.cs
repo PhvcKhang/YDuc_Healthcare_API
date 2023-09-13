@@ -77,8 +77,20 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
-        var patient = await _personRepository.GetPatientInfoAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        var viewModel = _mapper.Map<PatientInfoViewModel>(patient);
+        //var stopwatch = new Stopwatch();
+        //stopwatch.Start();
+        //stopwatch.Stop();
+        //Console.WriteLine(stopwatch.ElapsedMilliseconds);
+
+        //listOfPeople = {patient, doctor, relative1, relative2 } respectively
+        var listOfPeople = await _personRepository.GetPatientInfoAsync(patientId);
+
+        var viewModel = _mapper.Map<PatientInfoViewModel>(listOfPeople[0]);
+
+        viewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
+
+        viewModel.Relatives = _mapper.Map<List<Person>,List<RelativesViewModel>>(new List<Person>() { listOfPeople[2], listOfPeople[3] });
+
         return viewModel;
     }
     public async Task<Credential> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)

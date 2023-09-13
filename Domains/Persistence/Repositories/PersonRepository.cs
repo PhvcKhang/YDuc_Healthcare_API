@@ -101,10 +101,13 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .ToListAsync();
 
     }
-    public async Task<Person?> GetPatientInfoAsync(string patientId)
+    public async Task<List<Person>> GetPatientInfoAsync(string patientId)
     {
+
         var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
- 
+        var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Doctor) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
+
         var lastBloodPressure = await _context.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBloodSugar = await _context.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBodyTemperature = await _context.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
@@ -116,7 +119,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
             patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
         }
 
-        return patient;
+        return new List<Person>() { patient, doctor, relatives[0], relatives[1]};
 
     }
     public Person AddPatient(string relativeId, string patientId)
