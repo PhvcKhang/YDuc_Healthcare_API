@@ -39,13 +39,15 @@ public class BloodSugarsController : Controller
 
             //Push Notification to Doctor
             PersonViewModel patient = await _personService.GetPerson(personId);
-            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
 
             //Push Notificaiton to OneSignal
+            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số đường huyết";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " blood sugar readings";
+            var imageURL = bloodSugar.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure), "ImageLink isn't valid");
+            var additionalData = new List<decimal>() { bloodSugar.Value };
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink, additionalData);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

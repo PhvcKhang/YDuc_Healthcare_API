@@ -28,7 +28,7 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, string imageUrl)
+        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, string imageUrl, List<decimal> additionalData)
         {
 
             //var doctorId = "240914";
@@ -40,11 +40,21 @@ namespace HealthCareApplication.OneSignal
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
 
-            request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\""+ENcontent+ "\",\"vi\":\""+VIcontent+"\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\""+ patientId+ "\"},\"large_icon\":\""+imageUrl+"\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
-
+            if (ENcontent.Contains("blood pressure"))
+            {
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"Systolic\":\"" + additionalData[0] + "\",\"Diastolic\":\"" + additionalData[1] + "\",\"PulseRate\":\"" + additionalData[2] +"\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+            }
+            else if (ENcontent.Contains("blood sugar"))
+            {
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BloodSugar\":\"" + additionalData[0] + "\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+            }
+            else if (ENcontent.Contains("body temperature"))
+            {
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BodyTemperature\":\"" + additionalData[0] + "\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+            }
             var response = await client.PostAsync(request);
 
-            var notificationId = response.Content?.ToString().Substring(7, 36); ;
+            var notificationId = response.Content?.ToString().Substring(7, 36); 
 
             //Return Notification object 
             var notification = new Notification(notificationId, VIcontent, patientId ,DateTime.Now, doctor, patientName);

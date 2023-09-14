@@ -1,5 +1,4 @@
 ﻿using HealthCareApplication.Domains.Models;
-using HealthCareApplication.Domains.Models.ManyMany;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

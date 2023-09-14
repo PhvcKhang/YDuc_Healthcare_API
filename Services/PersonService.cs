@@ -10,6 +10,7 @@ using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace HealthCareApplication.Services;
 
@@ -77,21 +78,30 @@ public class PersonService : IPersonService
     }
     public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
     {
-        //var stopwatch = new Stopwatch();
-        //stopwatch.Start();
-        //stopwatch.Stop();
-        //Console.WriteLine(stopwatch.ElapsedMilliseconds);
-
         //listOfPeople = {patient, doctor, relative1, relative2 } respectively
         var listOfPeople = await _personRepository.GetPatientInfoAsync(patientId);
 
-        var viewModel = _mapper.Map<PatientInfoViewModel>(listOfPeople[0]);
+        var patientViewModel = _mapper.Map<PatientInfoViewModel>(listOfPeople[0]);
 
-        viewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
 
-        viewModel.Relatives = _mapper.Map<List<Person>,List<RelativesViewModel>>(new List<Person>() { listOfPeople[2], listOfPeople[3] });
 
-        return viewModel;
+        //Demo-Only Relationship error
+        if (listOfPeople.Count() == 4)
+        {
+            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
+            patientViewModel.Relatives = _mapper.Map<List<Person>, List<RelativesViewModel>>(new List<Person>() { listOfPeople[2], listOfPeople[3] });
+        }
+        else if (listOfPeople.Count() == 3)
+        {
+            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
+            patientViewModel.Relatives = _mapper.Map<List<Person>, List<RelativesViewModel>>(new List<Person>() { listOfPeople[2] });
+        }
+        else if (listOfPeople.Count() == 2)
+        {
+            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
+        }
+
+        return patientViewModel;
     }
     public async Task<Credential> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
     {
@@ -110,7 +120,7 @@ public class PersonService : IPersonService
         var username = relative.PhoneNumber;
         var password = relative.PhoneNumber;
 
-        Credential credential = new Credential(username, password);
+        Credential credential = new (username, password);
 
         return credential;
     }
@@ -156,7 +166,7 @@ public class PersonService : IPersonService
         var username = patient.PhoneNumber;
         var password = patient.PhoneNumber;
 
-        Credential credential = new Credential(username, password);
+        Credential credential = new (username, password);
 
         return credential;
     }

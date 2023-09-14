@@ -43,13 +43,17 @@ public class BloodPressuresController : Controller
 
             //Look for the patient
             PersonViewModel patient = await _personService.GetPerson(personId);
-            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
-    
+
+
             //Push Notificaiton to OneSignal
+            var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
             var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
+            var imageURL = bloodPressure.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure),"ImageLink isn't valid");
+            var additionalData = new List<decimal>() {bloodPressure.Systolic, bloodPressure.Diastolic, bloodPressure.PulseRate };
 
-            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent,bloodPressure.ImageLink);
+
+            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, imageURL,additionalData);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

@@ -119,7 +119,19 @@ public class PersonRepository : BaseRepository, IPersonRepository
             patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
         }
 
-        return new List<Person>() { patient, doctor, relatives[0], relatives[1]};
+        //Demo-Only Relationship error
+        if(relatives.Count() == 2 && doctor is not null)
+        {
+            return new List<Person>() { patient, doctor, relatives[0], relatives[1] };
+        }
+        else if(relatives.Count() == 1 && doctor is not null)
+        {
+            return new List<Person>() { patient, doctor, relatives[0]};
+        }
+        else
+        {
+            return new List<Person>() { patient };
+        }
 
     }
     public Person AddPatient(string relativeId, string patientId)
