@@ -31,10 +31,10 @@ namespace HealthCareApplication.Controllers
             return await _notificationService.GetAll();
         }
         [HttpGet]
-        [Route("{doctorId}")]
-        public async Task<List<NotificationViewModel>> GetByDoctorId([FromRoute] string doctorId)
+        [Route("{doctorId}/startIndex={startIndex}/lastIndex={lastIndex}")]
+        public async Task<List<NotificationViewModel>> GetByDoctorId([FromRoute] string doctorId, [FromRoute] int startIndex, [FromRoute] int lastIndex)
         {
-            return await _notificationService.GetByDoctorId(doctorId);
+            return await _notificationService.GetByDoctorId(doctorId, startIndex, lastIndex);
         }
         [HttpPut]
         [Route("{notificationId}")]
@@ -56,5 +56,19 @@ namespace HealthCareApplication.Controllers
         {
             return await _notificationService.GetUnseenNotifications(doctorId);
         }
+        [HttpDelete]
+        [Route("{notificationId}")]
+        public async Task<IActionResult> Delete(string notificationId)
+        {
+            try
+            {
+                var result = await _notificationService.Delete(notificationId);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+        } 
     }
 }

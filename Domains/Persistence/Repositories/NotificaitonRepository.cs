@@ -2,6 +2,7 @@
 using HealthCareApplication.Domains.Persistence.Contexts;
 using HealthCareApplication.Domains.Persistence.Exceptions;
 using HealthCareApplication.Domains.Repositories;
+using HealthCareApplication.Extensions.Exceptions;
 using HealthCareApplication.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -37,14 +38,15 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             return await _context.Notifications
                 .AnyAsync(x => x.NotificaitonId == notificationId);
         }
-        public async Task<List<Notification>> GetByIdAsync(string doctorId)
+        public async Task<List<Notification>> GetByIdAsync(string doctorId, int startIndex, int lastIndex)
         {
 
-            var notificaitons = await _context.Notifications
+            var notifications = await _context.Notifications
                 .Where(x => x.Doctor.PersonId == doctorId)
+                .OrderByDescending(x => x.SendAt)
                 .ToListAsync();
-            notificaitons.OrderByDescending(x => x.SendAt);
-            return notificaitons;
+            var result = notifications.GetRange(startIndex, lastIndex);
+            return result;
         }
         public Notification ChangeStatusAsync(string notificationId)
         {
@@ -62,6 +64,14 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             notifications.RemoveAll(x => x.Seen ==  true);
             var unseenCounter = notifications.Count();
             return unseenCounter;
+        }
+        public async Task<Notification> DeleteAsync(string notificationId)
+        {
+            var notification = await _context.Notifications
+                .FirstOrDefaultAsync(x => x.NotificaitonId == notificationId) ?? throw new ResourceNotFoundException(nameof(Notification), notificationId);
+            return _context.Notifications
+                .Remove(notification)
+                .Entity;
         }
     }
 }

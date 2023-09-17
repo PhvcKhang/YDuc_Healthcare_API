@@ -37,6 +37,7 @@ public class BloodPressuresController : Controller
 
             //Create a new statistic
             var result = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
+            var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
@@ -50,10 +51,10 @@ public class BloodPressuresController : Controller
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
             var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
             var imageURL = bloodPressure.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure),"ImageLink isn't valid");
-            var additionalData = new List<decimal>() {bloodPressure.Systolic, bloodPressure.Diastolic, bloodPressure.PulseRate };
+            var additionalData = new List<decimal>() {bloodPressure.Systolic, bloodPressure.PulseRate };
 
 
-            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, imageURL,additionalData);
+            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, imageURL, additionalData, updatedDate);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

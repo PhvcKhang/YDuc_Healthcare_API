@@ -31,7 +31,9 @@ public class BodyTemperaturesController : Controller
     {
         try
         {
+            //Create a new statistic
             var result = await _bodyTemperatureService.CreateBodyTemperature(personId, bodyTemperature);
+            var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
@@ -46,7 +48,7 @@ public class BodyTemperaturesController : Controller
             var imageURL = bodyTemperature.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure), "ImageLink isn't valid");
             var additionalData = new List<decimal>() { bodyTemperature.Value };
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature.ImageLink, additionalData);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature.ImageLink, additionalData, updatedDate);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

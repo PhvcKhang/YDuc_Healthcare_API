@@ -7,8 +7,9 @@ namespace HealthCareApplication.Domains.Services
     {
         Task<bool> CreateNotification(Notification notification);
         Task<List<NotificationViewModel>> GetAll();
-        Task<List<NotificationViewModel>> GetByDoctorId(string doctorId);
+        Task<List<NotificationViewModel>> GetByDoctorId(string doctorId, int startIndex, int lastIndex);
         Task<bool> ChangeStatus(string notificationId);
         Task<int> GetUnseenNotifications(string notificationId);
+        Task<bool> Delete(string notificationId);
     }
 }

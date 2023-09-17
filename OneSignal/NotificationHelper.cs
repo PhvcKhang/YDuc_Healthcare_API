@@ -28,7 +28,7 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, string imageUrl, List<decimal> additionalData)
+        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, string imageUrl, List<decimal> additionalData, string updatedDate)
         {
 
             //var doctorId = "240914";
@@ -42,15 +42,15 @@ namespace HealthCareApplication.OneSignal
 
             if (ENcontent.Contains("blood pressure"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"Systolic\":\"" + additionalData[0] + "\",\"Diastolic\":\"" + additionalData[1] + "\",\"PulseRate\":\"" + additionalData[2] +"\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"Systolic\":\"" + additionalData[0] + "\",\"Diastolic\":\"" + additionalData[1] + "\", \"ImageLink\":\"" + imageUrl + "\", \"UpdatedDate\":\"" + DateTime.Now.ToString() + "\",\"Indicator\":\"BloodPressure\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
             }
             else if (ENcontent.Contains("blood sugar"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BloodSugar\":\"" + additionalData[0] + "\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BloodSugar\":\"" + additionalData[0] + "\",\"ImageLink\":\"" + imageUrl + "\", \"UpdatedDate\":\"" + updatedDate + "\",\"Indicator\":\"BloodSugar\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
             }
             else if (ENcontent.Contains("body temperature"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BodyTemperature\":\"" + additionalData[0] + "\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BodyTemperature\":\"" + additionalData[0] + "\",\"ImageLink\":\"" + imageUrl + "\",\"UpdatedDate\":\"" + updatedDate+ "\",\"Indicator\":\"BodyTemperature\"},\"large_icon\":\"" + imageUrl + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
             }
             var response = await client.PostAsync(request);
 

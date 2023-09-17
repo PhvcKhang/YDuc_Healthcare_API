@@ -10,6 +10,12 @@ namespace HealthCareApplication.Domains.Models
         public string PatientId { get; set; } //send
         public string PatientName { get; set; }
         public Person? Doctor { get; set; } //receiver
+        //public string BloodPressureId { get; set; }
+        //public BloodPressure? BloodPressure { get; set; } = null;
+        //public string BloodSugarId { get; set; }
+        //public BloodSugar? BloodSugar { get; set; } = null;
+        //public string BloodTemperatureId { get; set; }
+        //public BodyTemperature? BodyTemperature { get; set; } = null;
         public bool Seen { get; set; } = false;
         public DateTime SendAt { get; set; }
         public Notification(string notificaitonId, string? content, string patientId, DateTime sendAt, Person doctor, string patientName)

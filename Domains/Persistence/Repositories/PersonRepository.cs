@@ -103,7 +103,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     }
     public async Task<List<Person>> GetPatientInfoAsync(string patientId)
     {
-
         var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Doctor) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
@@ -112,15 +111,15 @@ public class PersonRepository : BaseRepository, IPersonRepository
         var lastBloodSugar = await _context.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBodyTemperature = await _context.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
 
-        if (patient.BloodPressures is not null && patient.BloodSugars is not null && patient.BodyTemperatures is not null)
-        {
-            patient.BloodPressures.RemoveAll(x => x != lastBloodPressure);
-            patient.BloodSugars.RemoveAll(x => x != lastBloodSugar);
-            patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
-        }
+        //if (patient.BloodPressures is not null && patient.BloodSugars is not null && patient.BodyTemperatures is not null)
+        //{
+        //    patient.BloodPressures.RemoveAll(x => x != lastBloodPressure);
+        //    patient.BloodSugars.RemoveAll(x => x != lastBloodSugar);
+        //    patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
+        //}
 
-        //Demo-Only Relationship error
-        if(relatives.Count() == 2 && doctor is not null)
+        //Testing-Only Relationship Logic error
+        if(relatives.Count() >= 2 && doctor is not null)
         {
             return new List<Person>() { patient, doctor, relatives[0], relatives[1] };
         }
@@ -197,7 +196,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonId == patientId)
             .FirstOrDefaultAsync();
     }
-
 
     #endregion Relative
 

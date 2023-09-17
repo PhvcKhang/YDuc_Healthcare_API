@@ -1,6 +1,6 @@
 ﻿namespace HealthCareApplication.Domains.Models;
 
-public class BodyTemperature
+public class BodyTemperature 
 {
     public string BodyTemperatureId { get; private set; }
     public decimal Value { get; private set; }

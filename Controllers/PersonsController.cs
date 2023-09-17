@@ -1,5 +1,4 @@
-
-﻿using Azure.Core;
+using Azure.Core;
 using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
@@ -8,6 +7,7 @@ using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using MesMicroservice.Api.Application.Messages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Diagnostics;

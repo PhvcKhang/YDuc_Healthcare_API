@@ -33,7 +33,10 @@ public class BloodSugarsController : Controller
     {
         try
         {
+            //Create a new statistic
             var result = await _bloodSugarService.CreateBloodSugar(personId, bloodSugar);
+            var updatedDate = DateTime.Now.ToString();
+
             //Look for the doctor who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
 
@@ -47,7 +50,7 @@ public class BloodSugarsController : Controller
             var imageURL = bloodSugar.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure), "ImageLink isn't valid");
             var additionalData = new List<decimal>() { bloodSugar.Value };
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink, additionalData);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar.ImageLink, additionalData, updatedDate);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

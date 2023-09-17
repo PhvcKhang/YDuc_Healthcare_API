@@ -31,9 +31,9 @@ namespace HealthCareApplication.Services
             var notifications = await _notificationRepository.GetAllAsync();
             return _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
         }
-        public async Task<List<NotificationViewModel>> GetByDoctorId(string doctorId)
+        public async Task<List<NotificationViewModel>> GetByDoctorId(string doctorId, int startIndex, int lastIndex)
         {
-            var notifications = await _notificationRepository.GetByIdAsync(doctorId);
+            var notifications = await _notificationRepository.GetByIdAsync(doctorId, startIndex, lastIndex);
             return _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
         }
         public async Task<bool> ChangeStatus(string notificationId)
@@ -45,6 +45,12 @@ namespace HealthCareApplication.Services
         public Task<int> GetUnseenNotifications(string doctorId)
         {
             return _notificationRepository.GetUnseenNotificationsAsync(doctorId);
+        }
+
+        public async Task<bool> Delete(string notificationId)
+        {
+            await _notificationRepository.DeleteAsync(notificationId);
+            return await _unitOfWork.CompleteAsync();
         }
     }
 }

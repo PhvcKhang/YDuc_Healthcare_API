@@ -41,7 +41,6 @@ public class BloodPressureService : IBloodPressureService
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var bloodPressure = new BloodPressure(
             viewModel.Systolic,
-            viewModel.Diastolic,
             viewModel.PulseRate,
             viewModel.ImageLink,
             DateTime.UtcNow.AddHours(7),
