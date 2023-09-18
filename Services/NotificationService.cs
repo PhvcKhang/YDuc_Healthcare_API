@@ -29,12 +29,14 @@ namespace HealthCareApplication.Services
         public async Task<List<NotificationViewModel>> GetAll()
         {
             var notifications = await _notificationRepository.GetAllAsync();
-            return _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
+            var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
+            return viewModel;
         }
         public async Task<List<NotificationViewModel>> GetByDoctorId(string doctorId, int startIndex, int lastIndex)
         {
             var notifications = await _notificationRepository.GetByIdAsync(doctorId, startIndex, lastIndex);
-            return _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
+            var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notifications);
+            return viewModel;
         }
         public async Task<bool> ChangeStatus(string notificationId)
         {

@@ -32,7 +32,7 @@ public class BodyTemperaturesController : Controller
         try
         {
             //Create a new statistic
-            var result = await _bodyTemperatureService.CreateBodyTemperature(personId, bodyTemperature);
+            var newBodyTemperature = await _bodyTemperatureService.CreateBodyTemperature(personId, bodyTemperature);
             var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor who responsibilizes for this patient 
@@ -45,15 +45,13 @@ public class BodyTemperaturesController : Controller
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số thân nhiệt";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " body temperature readings";
-            var imageURL = bodyTemperature.ImageLink ?? throw new ArgumentNullException(nameof(BloodPressure), "ImageLink isn't valid");
-            var additionalData = new List<decimal>() { bodyTemperature.Value };
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature.ImageLink, additionalData, updatedDate);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature: newBodyTemperature);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);
 
-            return Ok(result);
+            return Ok(true);
         }
         catch (Exception ex)
         {

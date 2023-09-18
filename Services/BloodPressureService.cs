@@ -36,7 +36,7 @@ public class BloodPressureService : IBloodPressureService
         return _mapper.Map<List<BloodPressureViewModel>>(bloodPressures);
     }
 
-    public async Task<bool> CreateBloodPressure(string personId, CreateBloodPressureViewModel viewModel)
+    public async Task<BloodPressure> CreateBloodPressure(string personId, CreateBloodPressureViewModel viewModel)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var bloodPressure = new BloodPressure(
@@ -46,7 +46,8 @@ public class BloodPressureService : IBloodPressureService
             DateTime.UtcNow.AddHours(7),
             person);
 
-        await _bloodPressureRepository.Add(bloodPressure);
-        return await _unitOfWork.CompleteAsync();
+        var entity = await _bloodPressureRepository.Add(bloodPressure);
+        await _unitOfWork.CompleteAsync();
+        return entity;
     }
 }

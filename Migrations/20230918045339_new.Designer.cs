@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCareApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230918045339_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +33,9 @@ namespace HealthCareApplication.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("ImageLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotificationId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
@@ -62,6 +68,9 @@ namespace HealthCareApplication.Migrations
                     b.Property<string>("ImageLink")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NotificationId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -89,6 +98,9 @@ namespace HealthCareApplication.Migrations
                     b.Property<string>("ImageLink")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NotificationId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -108,16 +120,7 @@ namespace HealthCareApplication.Migrations
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
                 {
-                    b.Property<string>("NotificationId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BloodPressureId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BloodSugarId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BodyTemperatureId")
+                    b.Property<string>("NotificaitonId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
@@ -146,19 +149,7 @@ namespace HealthCareApplication.Migrations
                     b.Property<DateTime>("SendAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("NotificationId");
-
-                    b.HasIndex("BloodPressureId")
-                        .IsUnique()
-                        .HasFilter("[BloodPressureId] IS NOT NULL");
-
-                    b.HasIndex("BloodSugarId")
-                        .IsUnique()
-                        .HasFilter("[BloodSugarId] IS NOT NULL");
-
-                    b.HasIndex("BodyTemperatureId")
-                        .IsUnique()
-                        .HasFilter("[BodyTemperatureId] IS NOT NULL");
+                    b.HasKey("NotificaitonId");
 
                     b.HasIndex("DoctorPersonId");
 
@@ -254,21 +245,27 @@ namespace HealthCareApplication.Migrations
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
                 {
-                    b.HasOne("HealthCareApplication.Domains.Models.BloodPressure", "BloodPressure")
-                        .WithOne("Notification")
-                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "BloodPressureId");
-
-                    b.HasOne("HealthCareApplication.Domains.Models.BloodSugar", "BloodSugar")
-                        .WithOne("Notification")
-                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "BloodSugarId");
-
-                    b.HasOne("HealthCareApplication.Domains.Models.BodyTemperature", "BodyTemperature")
-                        .WithOne("Notification")
-                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "BodyTemperatureId");
-
                     b.HasOne("HealthCareApplication.Domains.Models.Person", "Doctor")
                         .WithMany("Notifications")
                         .HasForeignKey("DoctorPersonId");
+
+                    b.HasOne("HealthCareApplication.Domains.Models.BloodPressure", "BloodPressure")
+                        .WithOne("Notification")
+                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "NotificaitonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthCareApplication.Domains.Models.BloodSugar", "BloodSugar")
+                        .WithOne("Notification")
+                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "NotificaitonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthCareApplication.Domains.Models.BodyTemperature", "BodyTemperature")
+                        .WithOne("Notification")
+                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "NotificaitonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BloodPressure");
 

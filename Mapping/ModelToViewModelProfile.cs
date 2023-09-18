@@ -24,7 +24,8 @@ public class ModelToViewModelProfile : Profile
         CreateMap<Person, RelativeInfoViewModel>();
 
 
-        CreateMap<Notification, NotificationViewModel>();
+        CreateMap<Notification, NotificationViewModel>().ForAllMembers(
+            opt => opt.Condition((src, dest, sourceMember) => sourceMember != null));
 
         CreateMap<BloodPressure, BloodPressureViewModel>();
         CreateMap<BloodPressure, BloodPressureMetricViewModel>();

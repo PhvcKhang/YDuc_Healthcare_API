@@ -11,5 +11,7 @@ public class BodyTemperatureEntityTypeConfiguration : IEntityTypeConfiguration<B
         builder.HasKey(x => x.BodyTemperatureId);
         builder.Property(x => x.BodyTemperatureId)
             .HasDefaultValueSql("NEWID()");
+
+        builder.HasOne(x => x.Notification).WithOne(x => x.BodyTemperature).HasForeignKey<Notification>(x => x.BodyTemperatureId);
     }
 }

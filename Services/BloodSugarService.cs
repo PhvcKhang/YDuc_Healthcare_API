@@ -38,7 +38,7 @@ public class BloodSugarService : IBloodSugarService
         return _mapper.Map<List<BloodSugarViewModel>>(bloodSugars);
     }
 
-    public async Task<bool> CreateBloodSugar(string personId, CreateBloodSugarViewModel viewModel)
+    public async Task<BloodSugar> CreateBloodSugar(string personId, CreateBloodSugarViewModel viewModel)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var bloodSugar = new BloodSugar(
@@ -47,7 +47,8 @@ public class BloodSugarService : IBloodSugarService
             DateTime.UtcNow.AddHours(7),
             person);
 
-        await _bloodSugarRepository.Add(bloodSugar);
-        return await _unitOfWork.CompleteAsync();
+        var entity = await _bloodSugarRepository.Add(bloodSugar);
+        await _unitOfWork.CompleteAsync();
+        return entity;
     }
 }

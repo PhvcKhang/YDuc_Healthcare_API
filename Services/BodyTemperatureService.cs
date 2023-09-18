@@ -38,7 +38,7 @@ public class BodyTemperatureService : IBodyTemperatureService
         return _mapper.Map<List<BodyTemperatureViewModel>>(bodyTemperatures);
     }
 
-    public async Task<bool> CreateBodyTemperature(string personId, CreateBodyTemperatureViewModel viewModel)
+    public async Task<BodyTemperature> CreateBodyTemperature(string personId, CreateBodyTemperatureViewModel viewModel)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         var bodyTemperature = new BodyTemperature(
@@ -47,7 +47,8 @@ public class BodyTemperatureService : IBodyTemperatureService
             DateTime.UtcNow.AddHours(7),
             person);
 
-        await _bodyTemperatureRepository.Add(bodyTemperature);
-        return await _unitOfWork.CompleteAsync();
+        var entiry = await _bodyTemperatureRepository.Add(bodyTemperature);
+        await _unitOfWork.CompleteAsync();
+        return entiry;
     }
 }

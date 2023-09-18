@@ -11,5 +11,7 @@ public class BloodPressureEntityTypeConfiguration : IEntityTypeConfiguration<Blo
         builder.HasKey(x => x.BloodPressureId);
         builder.Property(x => x.BloodPressureId)
             .HasDefaultValueSql("NEWID()");
+
+        builder.HasOne(x => x.Notification).WithOne(x => x.BloodPressure).HasForeignKey<Notification>(x => x.BloodPressureId);
     }
 }
