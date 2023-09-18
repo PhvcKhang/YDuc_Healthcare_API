@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BloodPressure> BloodPressures { get; set; }
     public DbSet<BloodSugar> BloodSugars { get; set; }
     public DbSet<BodyTemperature> BodyTemperatures { get; set; }
+    public DbSet<SpO2> SpO2s { get; set; }
 
     public DbSet<Notification> Notifications { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
@@ -21,5 +22,6 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new BloodSugarEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BodyTemperatureEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new NotificationEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new SpO2EntityTypeConfiguration());
     }
 }

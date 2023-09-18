@@ -47,8 +47,9 @@ public class BloodSugarsController : Controller
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số đường huyết";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " blood sugar readings";
+            ENotificationType notificationType = ENotificationType.BloodSugar;
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bloodSugar: newBloodSugar);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, notificationType, bloodSugar: newBloodSugar);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

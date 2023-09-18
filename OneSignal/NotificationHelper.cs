@@ -28,7 +28,7 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, BloodPressure? bloodPressure = null, BloodSugar? bloodSugar = null, BodyTemperature? bodyTemperature = null)
+        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, ENotificationType notificationType, BloodPressure? bloodPressure = null, BloodSugar? bloodSugar = null, BodyTemperature? bodyTemperature = null, SpO2? spO2 = null)
         {
 
             //var doctorId = "240914";
@@ -52,12 +52,16 @@ namespace HealthCareApplication.OneSignal
             {
                 request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BodyTemperature\":\"" + bodyTemperature?.Value + "\",\"ImageLink\":\"" + bodyTemperature?.ImageLink + "\",\"UpdatedDate\":\"" + bodyTemperature?.Timestamp + "\",\"Indicator\":\"BodyTemperature\"},\"large_icon\":\"" + bodyTemperature?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
             }
+            else if (ENcontent.Contains("SpO2"))
+            {
+                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"SpO2\":\"" + spO2?.Value + "\",\"ImageLink\":\"" + spO2?.ImageLink + "\",\"UpdatedDate\":\"" + spO2?.Timestamp + "\",\"Indicator\":\"SpO2\"},\"large_icon\":\"" + spO2?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+            }
             var response = await client.PostAsync(request);
 
             var notificationId = response.Content?.ToString().Substring(7, 36); 
 
-            //Return Notification object 
-            var notification = new Notification(notificationId, VIcontent, patientId ,DateTime.Now, doctor, patientName, bloodPressure, bloodSugar, bodyTemperature);
+            //Return Notification entity
+            var notification = new Notification(notificationId, VIcontent, patientId , DateTime.Now, doctor, patientName, bloodPressure, bloodSugar,bodyTemperature ,spO2, notificationType);
             return notification;
 
         }

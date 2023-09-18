@@ -33,6 +33,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
                 .Include(x => x.BloodPressure)
                 .Include(x => x.BloodSugar)
                 .Include(x => x.BodyTemperature)
+                .Include(x => x.SpO2)
                 .ToListAsync();
             return notifications;
 
@@ -49,6 +50,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
                 .Include(x => x.BloodPressure)
                 .Include(x => x.BloodSugar)
                 .Include(x => x.BodyTemperature)
+                .Include(x => x.SpO2)
                 .Where(x => x.Doctor.PersonId == doctorId)
                 .OrderByDescending(x => x.SendAt)
                 .ToListAsync();

@@ -8,6 +8,7 @@ using HealthCareApplication.Resource.Notification;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Relatives;
+using HealthCareApplication.Resource.SpO2;
 
 namespace HealthCareApplication.Mapping;
 
@@ -24,12 +25,12 @@ public class ModelToViewModelProfile : Profile
         CreateMap<Person, RelativeInfoViewModel>();
 
 
-        CreateMap<Notification, NotificationViewModel>().ForAllMembers(
-            opt => opt.Condition((src, dest, sourceMember) => sourceMember != null));
+        CreateMap<Notification, NotificationViewModel>(); 
 
         CreateMap<BloodPressure, BloodPressureViewModel>();
         CreateMap<BloodPressure, BloodPressureMetricViewModel>();
         CreateMap<BloodSugar, BloodSugarViewModel>();
         CreateMap<BodyTemperature, BodyTemperatureViewModel>();
+        CreateMap<SpO2, SpO2ViewModel>();
     }
 }

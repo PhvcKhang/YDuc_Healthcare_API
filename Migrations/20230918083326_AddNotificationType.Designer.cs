@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCareApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230918083326_AddNotificationType")]
+    partial class AddNotificationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,9 +149,6 @@ namespace HealthCareApplication.Migrations
                     b.Property<DateTime>("SendAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SpO2Id")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -167,10 +167,6 @@ namespace HealthCareApplication.Migrations
                         .HasFilter("[BodyTemperatureId] IS NOT NULL");
 
                     b.HasIndex("DoctorPersonId");
-
-                    b.HasIndex("SpO2Id")
-                        .IsUnique()
-                        .HasFilter("[SpO2Id] IS NOT NULL");
 
                     b.ToTable("Notifications");
                 });
@@ -212,33 +208,6 @@ namespace HealthCareApplication.Migrations
                     b.HasKey("PersonId");
 
                     b.ToTable("Persons");
-                });
-
-            modelBuilder.Entity("HealthCareApplication.Domains.Models.SpO2", b =>
-                {
-                    b.Property<string>("SpO2Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<string>("ImageLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PersonId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("SpO2Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("SpO2s");
                 });
 
             modelBuilder.Entity("PersonPerson", b =>
@@ -307,10 +276,6 @@ namespace HealthCareApplication.Migrations
                         .WithMany("Notifications")
                         .HasForeignKey("DoctorPersonId");
 
-                    b.HasOne("HealthCareApplication.Domains.Models.SpO2", "SpO2")
-                        .WithOne("Notification")
-                        .HasForeignKey("HealthCareApplication.Domains.Models.Notification", "SpO2Id");
-
                     b.Navigation("BloodPressure");
 
                     b.Navigation("BloodSugar");
@@ -318,19 +283,6 @@ namespace HealthCareApplication.Migrations
                     b.Navigation("BodyTemperature");
 
                     b.Navigation("Doctor");
-
-                    b.Navigation("SpO2");
-                });
-
-            modelBuilder.Entity("HealthCareApplication.Domains.Models.SpO2", b =>
-                {
-                    b.HasOne("HealthCareApplication.Domains.Models.Person", "Person")
-                        .WithMany("SpO2s")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("PersonPerson", b =>
@@ -372,13 +324,6 @@ namespace HealthCareApplication.Migrations
                     b.Navigation("BodyTemperatures");
 
                     b.Navigation("Notifications");
-
-                    b.Navigation("SpO2s");
-                });
-
-            modelBuilder.Entity("HealthCareApplication.Domains.Models.SpO2", b =>
-                {
-                    b.Navigation("Notification");
                 });
 #pragma warning restore 612, 618
         }

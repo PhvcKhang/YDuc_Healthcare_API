@@ -4,6 +4,7 @@ using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Relatives;
+using HealthCareApplication.Resource.SpO2;
 
 namespace HealthCareApplication.Resource.Persons
 {
@@ -23,6 +24,7 @@ namespace HealthCareApplication.Resource.Persons
         public List<BloodPressureViewModel>? BloodPressures { get; private set; }
         public List<BloodSugarViewModel>? BloodSugars { get; private set; }
         public List<BodyTemperatureViewModel>? BodyTemperatures { get; private set; }
+        public List<SpO2ViewModel>? SpO2s { get; private set; }
 
     }
 }

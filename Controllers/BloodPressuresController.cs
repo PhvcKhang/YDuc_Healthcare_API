@@ -51,7 +51,9 @@ public class BloodPressuresController : Controller
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số huyết áp";
             var ENcontent = "Patient " + patient.Name + " has just updated "+pronounce+" blood pressure readings";
 
-            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, bloodPressure: newBloodPressure);
+            ENotificationType notificationType = ENotificationType.BloodPressure;
+
+            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, notificationType, bloodPressure: newBloodPressure);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

@@ -45,8 +45,9 @@ public class BodyTemperaturesController : Controller
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
             var VIcontent = "Bệnh nhân " + patient.Name + " vừa cập nhật chỉ số thân nhiệt";
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " body temperature readings";
+            ENotificationType notificationType = ENotificationType.BodyTemperature;
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, bodyTemperature: newBodyTemperature);
+            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

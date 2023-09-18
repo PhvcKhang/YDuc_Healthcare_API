@@ -110,6 +110,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
         var lastBloodPressure = await _context.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBloodSugar = await _context.BloodSugars.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastBodyTemperature = await _context.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
+        var lastSpO2 = await _context.SpO2s.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
 
         //if (patient.BloodPressures is not null && patient.BloodSugars is not null && patient.BodyTemperatures is not null)
         //{
