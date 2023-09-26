@@ -56,7 +56,15 @@ public class PersonRepository : BaseRepository, IPersonRepository
 
         return persons;
     }
-
+    public async Task<Person?> GetByPhoneNumber(string phoneNumber)
+    {
+        return await _context.Persons.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+  
+    }
+    public async Task<Person?> GetPersonWithPatientsAsync(string personId)
+    {
+        return await _context.Persons.Include(x => x.Patients).FirstOrDefaultAsync(x => x.PersonId == personId);
+    }
     public Person Update(Person person)
     {
         return _context.Persons
@@ -104,7 +112,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     public async Task<List<Person>> GetPatientInfoAsync(string patientId)
     {
         var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Doctor) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Doctor) ?? throw new ResourceNotFoundException("Logical Error - There is no doctor being responsible for this patient");
         var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
 
         var lastBloodPressure = await _context.BloodPressures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
@@ -112,15 +120,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
         var lastBodyTemperature = await _context.BodyTemperatures.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
         var lastSpO2 = await _context.SpO2s.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync();
 
-        //if (patient.BloodPressures is not null && patient.BloodSugars is not null && patient.BodyTemperatures is not null)
-        //{
-        //    patient.BloodPressures.RemoveAll(x => x != lastBloodPressure);
-        //    patient.BloodSugars.RemoveAll(x => x != lastBloodSugar);
-        //    patient.BodyTemperatures.RemoveAll(x => x != lastBodyTemperature);
-        //}
-
-        //Testing-Only Relationship Logic error
-        if(relatives.Count() >= 2 && doctor is not null)
+        if(relatives.Count() == 2 && doctor is not null)
         {
             return new List<Person>() { patient, doctor, relatives[0], relatives[1] };
         }
@@ -128,20 +128,26 @@ public class PersonRepository : BaseRepository, IPersonRepository
         {
             return new List<Person>() { patient, doctor, relatives[0]};
         }
+        else if(doctor is null)
+        {
+            throw new Exception("This patient doesn't belong to any doctor");
+        }
         else
         {
-            return new List<Person>() { patient };
+            //Testing purpose only - This case is unvalid
+            return new List<Person>() { patient, doctor };
         }
 
     }
-    public Person AddPatient(string relativeId, string patientId)
+    public async Task<int> GetTheNumberOfRelatives(Person patient)
     {
-        Person relative = _context.Persons.Include(x => x.Patients).FirstOrDefault(x => x.PersonId == relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
-
-        Person patient = _context.Persons.FirstOrDefault(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        relative.Patients.Add(patient);
-
-        return _context.Persons.Update(relative).Entity;
+        var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
+        return relatives.Count();
+    }
+    public Person CreateRelationship(Person person, Person patient)
+    {
+        person.Patients.Add(patient);
+        return _context.Persons.Update(person).Entity;
     }
 
     #endregion Patient
@@ -197,6 +203,20 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonId == patientId)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<List<Person>> GetRelativesByPatientIdAsync(string patientId)
+    {
+        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var relatvies = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
+        return relatvies;
+    }
+
+    public async Task<bool> IsExisting(string phoneNumber)
+    {
+        return await _context.Persons.AnyAsync(x => x.PhoneNumber == phoneNumber);
+    }
+
+
 
     #endregion Relative
 

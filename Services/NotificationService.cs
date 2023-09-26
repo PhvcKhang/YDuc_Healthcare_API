@@ -54,5 +54,10 @@ namespace HealthCareApplication.Services
             await _notificationRepository.DeleteAsync(notificationId);
             return await _unitOfWork.CompleteAsync();
         }
+
+        public async Task<NumberOfNotifications> GetNumberOfNotifications(string doctorId)
+        {
+            return await _notificationRepository.GetNumberOfNotificationsAsync(doctorId);
+        }
     }
 }

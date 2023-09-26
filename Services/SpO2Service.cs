@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Domains.Models.Queries;
 using HealthCareApplication.Domains.Persistence.Repositories;
 using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Domains.Services;
@@ -8,7 +9,7 @@ using HealthCareApplication.Resource.SpO2;
 
 namespace HealthCareApplication.Services
 {
-    public class SpO2Service: ISpO2Service
+    public class SpO2Service : ISpO2Service
     {
         private readonly ISpO2Repository _spO2Repository;
         private readonly IPersonRepository _personRepository;
@@ -34,6 +35,13 @@ namespace HealthCareApplication.Services
             var entity = await _spO2Repository.Add(spO2);
             await _unitOfWork.CompleteAsync();
             return entity;
+        }
+
+        public async Task<List<SpO2ViewModel>> GetAll(string personId, TimeQuery timeQuery)
+        {
+            var spO2s = await _spO2Repository.GetAllAsync(personId, timeQuery);
+            var viewModel = _mapper.Map<List<SpO2>,List<SpO2ViewModel>>(spO2s);
+            return viewModel;
         }
     }
 }

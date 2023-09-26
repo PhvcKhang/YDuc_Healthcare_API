@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Domains.Persistence.Exceptions;
 using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Extensions.Exceptions;
@@ -80,10 +81,7 @@ public class PersonService : IPersonService
     {
         //listOfPeople = {patient, doctor, relative1, relative2 } respectively
         var listOfPeople = await _personRepository.GetPatientInfoAsync(patientId);
-
         var patientViewModel = _mapper.Map<PatientInfoViewModel>(listOfPeople[0]);
-
-
 
         //Demo-Only Relationship error
         if (listOfPeople.Count() == 4)
@@ -103,8 +101,22 @@ public class PersonService : IPersonService
 
         return patientViewModel;
     }
-    public async Task<Credential> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
+    public async Task<bool> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
     {
+        //Check the number of relatives
+        List<Person> relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
+        var count = relatives.Count();
+        if(count >= 2)
+        {
+            throw new Exception("The number of relatives belonging to this patient is already maxium");
+        }
+
+        //Check if the relative has existed
+        var isExisting = await _personRepository.IsExisting(addNewRelativeViewModel.PhoneNumber);
+        if (isExisting is true)
+        {
+            throw new EntityDuplicationException("This phone number has been registed by another person");
+        }
         //Look for patient entity
         var relative = _mapper.Map<AddNewRelativeViewModel, Person>(addNewRelativeViewModel);
 
@@ -113,16 +125,27 @@ public class PersonService : IPersonService
         await _unitOfWork.CompleteAsync();
 
         //Create relationship between patient and relative
-        await _personRepository.AddPatientAsync(relative.PersonId, patientId);
-        await _unitOfWork.CompleteAsync();
+        return await CreateRelationshipAsync(relative.PersonId, patientId);
+    }
+    public async Task<bool> AddExistingRelative(string relativePhoneNumber, string patientId)
+    {
+        //Check the number of relatives
+        List<Person> relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
+        var count = relatives.Count();
+        if (count >= 2)
+        {
+            throw new Exception("The number of relatives belonging to this patient is already maxium");
+        }
 
-        //Create Username and Password
-        var username = relative.PhoneNumber;
-        var password = relative.PhoneNumber;
-
-        Credential credential = new (username, password);
-
-        return credential;
+        //Check if the relative has existed
+        var isExisting = await _personRepository.IsExisting(relativePhoneNumber);
+        if (isExisting is false)
+        {
+            throw new EntityDuplicationException("The phone number hasn't been registed yet");
+        }
+        //Create relationship between patient and relative
+        var relative = await _personRepository.GetByPhoneNumber(relativePhoneNumber) ?? throw new ResourceNotFoundException("Can not find the entity");
+        return await CreateRelationshipAsync(relative.PersonId, patientId);
     }
     #endregion Patients
 
@@ -138,16 +161,31 @@ public class PersonService : IPersonService
         return _mapper.Map<List<Person>?,List<DoctorsViewModel>?>(doctors);
     }
 
-    public async Task<bool> AddPatientById(string personId, string patientId)
+    public async Task<bool> CreateRelationshipAsync(string personId, string patientId)
     {
+        var person = await _personRepository.GetPersonWithPatientsAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
+        var patient = await _personRepository.GetAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var theNumberOfRelatives = await _personRepository.GetTheNumberOfRelatives(patient);
 
-        await _personRepository.AddPatientAsync(personId,patientId);
+        if (theNumberOfRelatives >= 2)
+            {
+                throw new Exception("The number of relatives belonging to this patient is already maxium");
+            }
+        if (person.PersonType == EPersonType.Relative)
+        {
+            if (person.Patients.Contains(patient))
+            {
+                throw new Exception("The relationship between these entities has been existed");
+            }
+        }
+
+        _personRepository.CreateRelationship(person,patient);
 
         return await _unitOfWork.CompleteAsync();
     }
     public async Task<Person> FindDoctorByPatientId(string patientId)
     {
-        return await _personRepository.FindByIdAsync(patientId) ?? throw new ResourceNotFoundException(); 
+        return await _personRepository.FindByIdAsync(patientId) ?? throw new ResourceNotFoundException($"Can not find out the doctor who is responsible for patient with ID: {patientId}"); 
     }
 
     public async Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
@@ -184,4 +222,5 @@ public class PersonService : IPersonService
     }
 
     #endregion Relative
+
 }

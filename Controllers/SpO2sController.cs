@@ -1,4 +1,5 @@
 ﻿using HealthCareApplication.Domains.Models;
+using HealthCareApplication.Domains.Models.Queries;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodPressure;
@@ -25,6 +26,13 @@ namespace HealthCareApplication.Controllers
             _notificationService = notificationService;
             _personService = personService;
             _notificationHelper = new NotificationHelper();
+        }
+
+        [HttpGet]
+        [Route("{personId}")]
+        public async Task<List<SpO2ViewModel>> GetAll([FromRoute] string personId, [FromQuery] TimeQuery timeQuery )
+        {
+            return await _spO2Service.GetAll(personId, timeQuery);    
         }
         [HttpPost]
         [Route("{personId}")]
