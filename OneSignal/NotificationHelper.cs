@@ -9,6 +9,7 @@ using OneSignal.RestAPIv3.Client.Resources.Notifications;
 using HealthCareApplication.Domains.Services;
 using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Relatives;
 
 namespace HealthCareApplication.OneSignal
 {
@@ -28,40 +29,82 @@ namespace HealthCareApplication.OneSignal
 
         }
 
-        public async Task<Notification> PushAsync( string patientId, Person doctor, string patientName, string VIcontent, string ENcontent, ENotificationType notificationType, BloodPressure? bloodPressure = null, BloodSugar? bloodSugar = null, BodyTemperature? bodyTemperature = null, SpO2? spO2 = null)
+        public async Task<Notification> PushAsync( Person patient, Person doctor, List<Person> relatives, string VIcontent, string ENcontent, ENotificationType notificationType, BloodPressure? bloodPressure = null, BloodSugar? bloodSugar = null, BodyTemperature? bodyTemperature = null, SpO2? spO2 = null)
         {
-
-            //var doctorId = "240914";
-
             var options = new RestClientOptions("https://onesignal.com/api/v1/notifications");
             var client = new RestClient(options);
-            var request = new RestRequest("");
 
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
+            List<RestRequest> request = new();
+
+            for(int i = 0; i <= relatives.Count + 1; i++)
+            {
+                request.Add(new RestRequest(""));
+                request[i].AddHeader("Content-Type", "application/json");
+                request[i].AddHeader("Authorization", "Basic ZDViYWUzNGYtZjI3OS00N2Q3LWIwNDEtOWRjOGE3ZTQxOTVh");
+            }
+
 
             if (ENcontent.Contains("blood pressure"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"Systolic\":\"" + bloodPressure?.Systolic + "\",\"PulseRate\":\"" + bloodPressure?.PulseRate + "\", \"ImageLink\":\"" + bloodPressure?.ImageLink + "\", \"UpdatedDate\":\"" + bloodPressure?.Timestamp + "\",\"Indicator\":\"BloodPressure\",\"PatientName\":\""+patientName+"\"},\"large_icon\":\"" + bloodPressure?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                //Send Notification to Doctor
+                request[0].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"Systolic\":\"" + bloodPressure?.Systolic + "\",\"PulseRate\":\"" + bloodPressure?.PulseRate + "\", \"ImageLink\":\"" + bloodPressure?.ImageLink + "\", \"UpdatedDate\":\"" + bloodPressure?.Timestamp + "\",\"Indicator\":\"BloodPressure\",\"PatientName\":\"" + patient.Name + "\"},\"large_icon\":\"" + bloodPressure?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                await client.PostAsync(request[0]);
+
+                //Send Notification to Relatives
+                int j = 1;
+                foreach (Person relative in relatives)
+                {
+                    request[j].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"relativeId\",\"relation\":\"=\",\"value\":\"" + relative.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"Systolic\":\"" + bloodPressure?.Systolic + "\",\"PulseRate\":\"" + bloodPressure?.PulseRate + "\", \"ImageLink\":\"" + bloodPressure?.ImageLink + "\", \"UpdatedDate\":\"" + bloodPressure?.Timestamp + "\",\"Indicator\":\"BloodPressure\",\"PatientName\":\"" + patient.Name + "\"},\"large_icon\":\"" + bloodPressure?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                    await client.PostAsync(request[j]);
+                    j++;
+                }
             }
             else if (ENcontent.Contains("blood sugar"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BloodSugar\":\"" + bloodSugar?.Value + "\",\"ImageLink\":\"" + bloodSugar?.ImageLink + "\", \"UpdatedDate\":\"" + bloodSugar?.Timestamp + "\",\"Indicator\":\"BloodSugar\",\"PatientName\":\""+patientName+"\"},\"large_icon\":\"" + bloodSugar?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                //Send Notification to Doctor
+                request[0].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"BloodSugar\":\"" + bloodSugar?.Value + "\",\"ImageLink\":\"" + bloodSugar?.ImageLink + "\", \"UpdatedDate\":\"" + bloodSugar?.Timestamp + "\",\"Indicator\":\"BloodSugar\",\"PatientName\":\""+patient.Name+"\"},\"large_icon\":\"" + bloodSugar?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                
+                //Send Notification to Relatives
+                int j = 1;
+                foreach (Person relative in relatives)
+                {
+                    request[j].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + relative.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"BloodSugar\":\"" + bloodSugar?.Value + "\",\"ImageLink\":\"" + bloodSugar?.ImageLink + "\", \"UpdatedDate\":\"" + bloodSugar?.Timestamp + "\",\"Indicator\":\"BloodSugar\",\"PatientName\":\"" + patient.Name + "\"},\"large_icon\":\"" + bloodSugar?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                    await client.PostAsync(request[j]);
+                    j++;
+                }
             }
             else if (ENcontent.Contains("body temperature"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"BodyTemperature\":\"" + bodyTemperature?.Value + "\",\"ImageLink\":\"" + bodyTemperature?.ImageLink + "\",\"UpdatedDate\":\"" + bodyTemperature?.Timestamp + "\",\"Indicator\":\"BodyTemperature\",\"PatientName\":\""+patientName+"\"},\"large_icon\":\"" + bodyTemperature?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                //Send Notification to Doctor
+                request[0].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"BodyTemperature\":\"" + bodyTemperature?.Value + "\",\"ImageLink\":\"" + bodyTemperature?.ImageLink + "\",\"UpdatedDate\":\"" + bodyTemperature?.Timestamp + "\",\"Indicator\":\"BodyTemperature\",\"PatientName\":\""+patient.Name+"\"},\"large_icon\":\"" + bodyTemperature?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                
+                //Send Notification to Relatives
+                int j = 1;
+                foreach (Person relative in relatives)
+                {
+                    request[j].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + relative.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"BodyTemperature\":\"" + bodyTemperature?.Value + "\",\"ImageLink\":\"" + bodyTemperature?.ImageLink + "\",\"UpdatedDate\":\"" + bodyTemperature?.Timestamp + "\",\"Indicator\":\"BodyTemperature\",\"PatientName\":\"" + patient.Name + "\"},\"large_icon\":\"" + bodyTemperature?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                    await client.PostAsync(request[j]);
+                    j++;
+                }
             }
             else if (ENcontent.Contains("SpO2"))
             {
-                request.AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patientId + "\",\"SpO2\":\"" + spO2?.Value + "\",\"ImageLink\":\"" + spO2?.ImageLink + "\",\"UpdatedDate\":\"" + spO2?.Timestamp + "\",\"Indicator\":\"SpO2\", \"PatientName\":\""+patientName+"\"},\"large_icon\":\"" + spO2?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                //Send Notification to Doctor
+                request[0].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + doctor.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"SpO2\":\"" + spO2?.Value + "\",\"ImageLink\":\"" + spO2?.ImageLink + "\",\"UpdatedDate\":\"" + spO2?.Timestamp + "\",\"Indicator\":\"SpO2\", \"PatientName\":\""+patient.Name+"\"},\"large_icon\":\"" + spO2?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                
+                //Send Notification to Relatives
+                int j = 1;
+                foreach (Person relative in relatives)
+                {
+                    request[j].AddJsonBody("{\"filters\":[{\"field\":\"tag\", \"key\":\"doctorId\",\"relation\":\"=\",\"value\":\"" + relative.PersonId + "\"}],\"contents\":{\"en\":\"" + ENcontent + "\",\"vi\":\"" + VIcontent + "\"},\"app_id\":\"eb1e614e-54fe-4824-9c1a-aad236ec92d3\",\"data\":{\"patientId\":\"" + patient.PersonId + "\",\"SpO2\":\"" + spO2?.Value + "\",\"ImageLink\":\"" + spO2?.ImageLink + "\",\"UpdatedDate\":\"" + spO2?.Timestamp + "\",\"Indicator\":\"SpO2\", \"PatientName\":\"" + patient.Name + "\"},\"large_icon\":\"" + spO2?.ImageLink + "\",\"android_channel_id\": \"e757239a-9b22-4630-9201-6bb51fd86a2f\"}", false);
+                    await client.PostAsync(request[j]);
+                    j++;
+                }
             }
-            var response = await client.PostAsync(request);
-
-            var notificationId = response.Content?.ToString().Substring(7, 36) ?? throw new ArgumentNullException("Creating notification unsucessfully"); 
+            //var notificationId = response.Content?.ToString().Substring(7, 36) ?? throw new ArgumentNullException("Creating notification unsucessfully");
 
             //Return Notification entity
-            var notification = new Notification(notificationId, VIcontent, patientId , DateTime.Now, doctor, patientName, bloodPressure, bloodSugar,bodyTemperature ,spO2, notificationType);
+            var notification = new Notification( VIcontent, DateTime.Now, patient, bloodPressure, bloodSugar, bodyTemperature , spO2, notificationType);
             return notification;
 
         }

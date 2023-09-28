@@ -5,6 +5,7 @@ using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
+using HealthCareApplication.Resource.Persons.Relatives;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -39,12 +40,12 @@ public class BloodPressuresController : Controller
             var newBloodPressure = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
             var updatedDate = DateTime.Now.ToString();
 
-            //Look for the doctor who responsibilizes for this patient 
+            //Look for the doctor, relatives who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
+            List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
 
             //Look for the patient
-            PersonViewModel patient = await _personService.GetPerson(personId);
-
+            Person patient = await _personService.GetPerson(personId);
 
             //Push Notificaiton to OneSignal
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
@@ -53,11 +54,10 @@ public class BloodPressuresController : Controller
 
             ENotificationType notificationType = ENotificationType.BloodPressure;
 
-            var notification =  await _notificationHelper.PushAsync(personId, doctor,patient.Name, VIcontent, ENcontent, notificationType, bloodPressure: newBloodPressure);
+            var notification =  await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodPressure: newBloodPressure);
 
-            //Add user-defined sample of this notification to database
+            //Add this notification to our database
             await _notificationService.CreateNotification(notification);
-
 
             return Ok(true);
         }

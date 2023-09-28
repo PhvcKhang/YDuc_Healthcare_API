@@ -149,7 +149,20 @@ public class PersonRepository : BaseRepository, IPersonRepository
         person.Patients.Add(patient);
         return _context.Persons.Update(person).Entity;
     }
+    public async Task<Person?> GetRelativeAsync(string patientId)
+    {
+        return await _context.Persons
+            .Include(x => x.Patients)
+            .Where(x => x.PersonId == patientId)
+            .FirstOrDefaultAsync();
+    }
 
+    public async Task<List<Person>> GetRelativesByPatientIdAsync(string patientId)
+    {
+        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var relatvies = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
+        return relatvies;
+    }
     #endregion Patient
 
     #region Doctor
@@ -196,27 +209,22 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Where(x => x.PersonType == EPersonType.Relative)
             .ToListAsync();
     }
-    public async Task<Person?> GetRelativeAsync(string patientId)
-    {
-        return await _context.Persons
-            .Include(x => x.Patients)
-            .Where(x => x.PersonId == patientId)
-            .FirstOrDefaultAsync();
-    }
 
-    public async Task<List<Person>> GetRelativesByPatientIdAsync(string patientId)
+    public async Task<List<Person>?> GetPatientsByIdAsync(string personId)
     {
-        var patient = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
-        var relatvies = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
-        return relatvies;
+        var person = await _context.Persons.Include(x => x.Patients).FirstOrDefaultAsync(x => x.PersonId == personId) ?? throw new ResourceNotFoundException(nameof(Person), personId); 
+        List<Person> patients = new();
+        foreach(Person patient in person.Patients)
+        {
+            patients.Add(patient);
+        }
+        return patients;
     }
 
     public async Task<bool> IsExisting(string phoneNumber)
     {
         return await _context.Persons.AnyAsync(x => x.PhoneNumber == phoneNumber);
     }
-
-
 
     #endregion Relative
 

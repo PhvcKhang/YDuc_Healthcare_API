@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.SpO2;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Http;
@@ -47,9 +48,10 @@ namespace HealthCareApplication.Controllers
 
                 //Look for the doctor who responsibilizes for this patient 
                 Person doctor = await _personService.FindDoctorByPatientId(personId);
+                List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
 
                 //Look for the patient
-                PersonViewModel patient = await _personService.GetPerson(personId);
+                Person patient = await _personService.GetPerson(personId);
 
 
                 //Push Notificaiton to OneSignal
@@ -59,7 +61,7 @@ namespace HealthCareApplication.Controllers
 
                 ENotificationType notificationType = ENotificationType.SpO2;
 
-                var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent, notificationType, spO2: newSpO2);
+                var notification = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, spO2: newSpO2);
 
                 //Add user-defined sample of this notification to database
                 await _notificationService.CreateNotification(notification);

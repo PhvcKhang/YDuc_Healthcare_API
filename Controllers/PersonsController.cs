@@ -65,9 +65,10 @@ public class PersonsController : Controller
 
     [HttpGet]
     [Route("{personId}")]
-    public async Task<PersonViewModel> GetPerson([FromRoute] string personId)
+    public async Task<Person> GetPerson([FromRoute] string personId)
     {
-        return await _personService.GetPerson(personId);
+        var result = await _personService.GetPerson(personId);
+        return result;
     }
 
     [HttpDelete]
@@ -121,15 +122,10 @@ public class PersonsController : Controller
     [Route("{patientId}/AddExistingRelative/{relativePhoneNumber}")]
     public async Task<IActionResult> AddExistingRelative([FromRoute] string relativePhoneNumber, [FromRoute] string patientId)
     {
-        try
-        {
+
             var result = await _personService.AddExistingRelative(relativePhoneNumber, patientId);
             return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
     }
     [HttpPut]
     [Route("{personId}/RemoveRelationship/{patientId}")]
@@ -176,6 +172,20 @@ public class PersonsController : Controller
             return BadRequest(ex.Message);
         }
 
+    }
+    [HttpDelete]
+    [Route("DeletePatient/{patientId}")]
+    public async Task<IActionResult> DeletePatientById([FromRoute] string patientId)
+    {
+        try
+        {
+            var result = await _personService.DeletePatientById(patientId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     #endregion Doctor
 

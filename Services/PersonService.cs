@@ -31,10 +31,10 @@ public class PersonService : IPersonService
     #endregion Properties & Constructor
 
     #region Person
-    public async Task<PersonViewModel> GetPerson(string personId)
+    public async Task<Person> GetPerson(string personId)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-        return _mapper.Map<PersonViewModel>(person);
+        return person;
     }
     public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
     {
@@ -141,11 +141,16 @@ public class PersonService : IPersonService
         var isExisting = await _personRepository.IsExisting(relativePhoneNumber);
         if (isExisting is false)
         {
-            throw new EntityDuplicationException("The phone number hasn't been registed yet");
+            throw new Exception("The phone number hasn't been registed yet");
         }
         //Create relationship between patient and relative
         var relative = await _personRepository.GetByPhoneNumber(relativePhoneNumber) ?? throw new ResourceNotFoundException("Can not find the entity");
         return await CreateRelationshipAsync(relative.PersonId, patientId);
+    }
+    public async Task<List<Person>> GetRelativesByPatientId(string patientId)
+    {
+        var relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
+        return relatives;
     }
     #endregion Patients
 
@@ -208,6 +213,18 @@ public class PersonService : IPersonService
 
         return credential;
     }
+    public async Task<bool> DeletePatientById(string patientId)
+    {
+        List<Person> relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
+
+        foreach (Person relative in relatives)
+        {
+            await _personRepository.RemoveRelationshipAsync(relative.PersonId, patientId);
+            await _personRepository.DeleteAsync(relative.PersonId);
+        }
+        await _personRepository.DeleteAsync(patientId);
+        return await _unitOfWork.CompleteAsync();
+    }
     #endregion Doctor
     #region Relative
     public async Task<List<RelativesViewModel>> GetAllRelatives()
@@ -220,6 +237,8 @@ public class PersonService : IPersonService
         var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
         return _mapper.Map<RelativeInfoViewModel>(relative);
     }
+
+
 
     #endregion Relative
 

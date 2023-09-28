@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Services;
 using HealthCareApplication.OneSignal;
 using HealthCareApplication.Resource.BodyTemperature;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Persons.Relatives;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,9 +38,10 @@ public class BodyTemperaturesController : Controller
 
             //Look for the doctor who responsibilizes for this patient 
             Person doctor = await _personService.FindDoctorByPatientId(personId);
+            List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
 
             //Push Notification to Doctor
-            PersonViewModel patient = await _personService.GetPerson(personId);
+            Person patient = await _personService.GetPerson(personId);
 
             //Push Notificaiton to OneSignal
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
@@ -47,7 +49,7 @@ public class BodyTemperaturesController : Controller
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " body temperature readings";
             ENotificationType notificationType = ENotificationType.BodyTemperature;
 
-            var notification = await _notificationHelper.PushAsync(personId, doctor, patient.Name, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
+            var notification = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
 
             //Add user-defined sample of this notification to database
             await _notificationService.CreateNotification(notification);

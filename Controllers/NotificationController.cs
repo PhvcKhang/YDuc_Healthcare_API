@@ -30,11 +30,12 @@ namespace HealthCareApplication.Controllers
         {
             return await _notificationService.GetAll();
         }
+
         [HttpGet]
-        [Route("{doctorId}")]
-        public async Task<List<NotificationViewModel>> GetByDoctorId([FromRoute] string doctorId, [FromQuery] int startIndex , [FromQuery] int lastIndex )
+        [Route("{personId}")]
+        public async Task<List<NotificationViewModel>> GetRangeById([FromRoute] string personId, [FromQuery] int startIndex, [FromQuery] int lastIndex)
         {
-            return await _notificationService.GetByDoctorId(doctorId, startIndex, lastIndex);
+            return await _notificationService.GetRangeById(personId, startIndex, lastIndex);
         }
         [HttpPut]
         [Route("{notificationId}")]
@@ -51,17 +52,17 @@ namespace HealthCareApplication.Controllers
             }
          }
         [HttpGet]
-        [Route("{doctorId}/Unseen")]
-        public async Task<int> UnseenNotifications([FromRoute]string doctorId)
+        [Route("{personId}/Unseen")]
+        public async Task<NumberOfNotifications> UnseenNotifications([FromRoute]string personId)
         {
-            return await _notificationService.GetUnseenNotifications(doctorId);
+            return await _notificationService.GetUnseenNotifications(personId);
         }
 
         [HttpGet]
-        [Route("{doctorId}/Count")]
-        public async Task<NumberOfNotifications> GetNumberOfNotifications([FromRoute]string doctorId)
+        [Route("{personId}/Count")]
+        public async Task<NumberOfNotifications> GetNumberOfNotifications([FromRoute]string personId)
         {
-            return await _notificationService.GetNumberOfNotifications(doctorId);
+            return await _notificationService.GetNumberOfNotifications(personId);
         }
         [HttpDelete]
         [Route("{notificationId}")]

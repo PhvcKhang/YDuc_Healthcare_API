@@ -9,7 +9,7 @@ namespace HealthCareApplication.Domains.Services;
 public interface IPersonService
 {
     #region Person
-    public Task<PersonViewModel> GetPerson(string personId);
+    public Task<Person> GetPerson(string personId);
     public Task<bool> CreatePerson(CreatePersonViewModel viewModel);
     public Task<bool> UpdatePerson(string personId, UpdatePersonViewModel viewModel);
     public Task<bool> DeletePerson(string personId);
@@ -21,6 +21,7 @@ public interface IPersonService
     public Task<PatientInfoViewModel> GetPatientInfo(string patientId);
     public Task<bool> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
     public Task<bool> AddExistingRelative(string relativePhoneNumber, string patientId);
+    public Task<List<Person>> GetRelativesByPatientId(string patientId);
     #endregion Patient
 
     #region Doctor
@@ -28,6 +29,7 @@ public interface IPersonService
     public Task<List<DoctorsViewModel>?> GetAllDoctors();
     public Task<Person> FindDoctorByPatientId(string patientId);
     public Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId);
+    public Task<bool> DeletePatientById(string patientId);
     #endregion Doctor
 
     #region Relative

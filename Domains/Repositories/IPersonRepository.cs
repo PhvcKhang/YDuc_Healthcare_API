@@ -13,7 +13,8 @@ public interface IPersonRepository
     public Task DeleteAsync(string personId);
     public Task<Person?> GetByPhoneNumber(string phoneNumber);
     public Task<Person?> GetPersonWithPatientsAsync(string personId);
- //   public Task<bool> ExistsAsync(string personId);
+    //   public Task<bool> ExistsAsync(string personId);
+    public Task<List<Person>?> GetPatientsByIdAsync(string personId);
     public Task<Person> RemoveRelationshipAsync(string personId, string patientId);
     #endregion Person
 
@@ -22,6 +23,8 @@ public interface IPersonRepository
     public Task<List<Person>> GetPatientInfoAsync(string personId);
     public Task<Person> AddPatientAsync(string personId, string patientId);
     public Task<int> GetTheNumberOfRelatives(Person patient);
+    public Task<Person?> GetRelativeAsync(string patientId);
+    public Task<List<Person>> GetRelativesByPatientIdAsync(string patientId);
     #endregion Patient
 
     #region Doctor
@@ -32,8 +35,7 @@ public interface IPersonRepository
 
     #region Relative
     public Task<List<Person>?> GetAllRelativesAsync();
-    public Task<Person?> GetRelativeAsync(string patientId);
-    public Task<List<Person>> GetRelativesByPatientIdAsync (string patientId);
+
     #endregion Relative
     #region Functions
     public Task<bool> IsExisting(string phoneNumber);

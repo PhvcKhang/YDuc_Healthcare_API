@@ -7,6 +7,7 @@ using HealthCareApplication.Migrations;
 using HealthCareApplication.Resource.Notification;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Numerics;
 
 namespace HealthCareApplication.Domains.Persistence.Repositories
 {
@@ -44,20 +45,6 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             return await _context.Notifications
                 .AnyAsync(x => x.NotificationId == notificationId);
         }
-        public async Task<List<Notification>> GetByIdAsync(string doctorId, int startIndex, int lastIndex )
-        {
-
-            var notifications = await _context.Notifications
-                .Include(x => x.BloodPressure)
-                .Include(x => x.BloodSugar)
-                .Include(x => x.BodyTemperature)
-                .Include(x => x.SpO2)
-                .Where(x => x.Doctor.PersonId == doctorId)
-                .OrderByDescending(x => x.SendAt)
-                .ToListAsync();
-            var result = notifications.GetRange(startIndex, lastIndex);
-            return result;
-        }
         public Notification ChangeStatusAsync(string notificationId)
         {
             var notificaiton =  _context.Notifications
@@ -66,15 +53,6 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             notificaiton.Seen = true;
             return _context.Notifications.Update(notificaiton).Entity;
 
-        }
-
-        public async Task<int> GetUnseenNotificationsAsync(string doctorId)
-        {
-            var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
-            List<Notification> notifications = await _context.Notifications.Where(x => x.Doctor == doctor).ToListAsync();
-            notifications.RemoveAll(x => x.Seen ==  true);
-            var unseenCounter = notifications.Count();
-            return unseenCounter;
         }
         public async Task<Notification> DeleteAsync(string notificationId)
         {
@@ -88,12 +66,25 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         public async Task<NumberOfNotifications> GetNumberOfNotificationsAsync(string doctorId)
         {
             var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
-            List<Notification> notifications = await _context.Notifications.Where(x => x.Doctor == doctor).ToListAsync();
+            List<Notification> notifications = await _context.Notifications.Where(x => x.Patient == doctor).ToListAsync();
             NumberOfNotifications count = new()
             {
                 numberOfNotifications = notifications.Count(),
             };
             return count;
         }
+
+        public async Task<List<Notification>> GetByPatientAsync(Person patient)
+        {
+            List<Notification> notifications = await _context.Notifications
+                .Include(x => x.BloodPressure)
+                .Include(x => x.BloodPressure)
+                .Include(x => x.BodyTemperature)
+                .Include(x => x.SpO2)
+                .Where(x => x.Patient == patient).ToListAsync();
+            return notifications;
+
+        }
+
     }
 }
