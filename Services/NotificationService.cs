@@ -101,9 +101,13 @@ namespace HealthCareApplication.Services
                 }
             }
             var count = notificationsOfCarer.Count;
-            if(count < lastIndex-startIndex)
+            if(count < lastIndex-startIndex && count != 0)
             {
                 lastIndex = count-1;
+            }
+            if(count == 0)
+            {
+                lastIndex = 0;
             }
             List<Notification> notificationSource = notificationsOfCarer.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex);
             var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notificationSource);

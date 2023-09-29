@@ -105,28 +105,14 @@ public class PersonsController : Controller
     }
 
     [HttpPost]
-    [Route("{patientId}/AddNewRelative")]
-    public async Task<IActionResult> AddNewRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
-    {
-        try
-        {
-            var result =  await _personService.AddNewRelative(addNewRelativeViewModel, patientId);
-            return Ok(result);
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-    [HttpPost]
-    [Route("{patientId}/AddExistingRelative/{relativePhoneNumber}")]
-    public async Task<IActionResult> AddExistingRelative([FromRoute] string relativePhoneNumber, [FromRoute] string patientId)
+    [Route("{patientId}/AddRelative")]
+    public async Task<Credential> AddRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
     {
 
-            var result = await _personService.AddExistingRelative(relativePhoneNumber, patientId);
-            return Ok(result);
-
+        var result =  await _personService.AddRelative(addNewRelativeViewModel, patientId);
+        return result;
     }
+
     [HttpPut]
     [Route("{personId}/RemoveRelationship/{patientId}")]
     public async Task<IActionResult> RemoveRelationship([FromRoute] string personId, [FromRoute] string patientId)
@@ -160,18 +146,10 @@ public class PersonsController : Controller
 
     [HttpPost]
     [Route("{doctorId}/AddNewPatient")]
-    public async Task<IActionResult> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
+    public async Task<Credential> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
-        try
-        {
             var result = await _personService.AddNewPatient(addNewPatientViewModel, doctorId);
-            return Ok(result);
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
+            return result;
     }
     [HttpDelete]
     [Route("DeletePatient/{patientId}")]

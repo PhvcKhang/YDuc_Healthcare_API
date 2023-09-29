@@ -19,8 +19,7 @@ public interface IPersonService
     #region Patient
     public Task<List<PatientsViewModel>> GetAllPatients();
     public Task<PatientInfoViewModel> GetPatientInfo(string patientId);
-    public Task<bool> AddNewRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
-    public Task<bool> AddExistingRelative(string relativePhoneNumber, string patientId);
+    public Task<Credential> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
     public Task<List<Person>> GetRelativesByPatientId(string patientId);
     #endregion Patient
 

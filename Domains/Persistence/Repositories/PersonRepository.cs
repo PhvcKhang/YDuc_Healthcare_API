@@ -144,7 +144,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
         var relatives = await _context.Persons.Where(x => x.Patients.Contains(patient) && x.PersonType == EPersonType.Relative).ToListAsync();
         return relatives.Count();
     }
-    public Person CreateRelationship(Person person, Person patient)
+    public Person CreateRelationshipAsync(Person person, Person patient)
     {
         person.Patients.Add(patient);
         return _context.Persons.Update(person).Entity;
