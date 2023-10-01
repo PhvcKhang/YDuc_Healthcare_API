@@ -1,12 +1,11 @@
 ﻿using HealthCareApplication.Domains.Models;
-using HealthCareApplication.Resource.Notification;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace HealthCareApplication.Resource.Persons.Patients
+namespace HealthCareApplication.Resource.Persons.Doctors
 {
     [DataContract]
-    public class AddNewRelativeViewModel
+    public class DoctorRegistrationViewModel
     {
         [DataMember]
         [JsonIgnore]
@@ -14,24 +13,23 @@ namespace HealthCareApplication.Resource.Persons.Patients
         [DataMember]
         [JsonIgnore]
         public string Password { get; set; }
+
         [DataMember]
-        public string Name { get; private set; }
-        [DataMember]
-        [JsonIgnore]
-        public int Age { get; private set; }
+        public string Name { get; set; }
 
         [DataMember]
         [JsonIgnore]
-        public EPersonType PersonType { get; private set; }
+        public EPersonType PersonType { get; set; } 
+
         [DataMember]
         public string PhoneNumber { get; private set; }
 
-        public AddNewRelativeViewModel( string name, string phoneNumber)
+        public DoctorRegistrationViewModel(string name, string phoneNumber)
         {
             Username = phoneNumber;
             Password = phoneNumber;
             Name = name;
-            PersonType = EPersonType.Relative;
+            PersonType = EPersonType.Doctor;
             PhoneNumber = phoneNumber;
         }
     }

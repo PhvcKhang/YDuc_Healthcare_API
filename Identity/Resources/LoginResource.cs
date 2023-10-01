@@ -7,6 +7,6 @@ namespace HealthCareApplication.Identity.Resources
     {
         public JwtToken Token { get; set; }
         public Person User { get; set; }
-        public string Role { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

@@ -4,5 +4,6 @@ public enum EPersonType
 {
     Patient,
     Doctor,
-    Relative
+    Relative,
+    Admin
 }

@@ -1,4 +1,4 @@
-﻿using HealthCareApplication.Migrations;
+﻿//using HealthCareApplication.Migrations;
 
 namespace HealthCareApplication.Domains.Models
 {
@@ -9,7 +9,8 @@ namespace HealthCareApplication.Domains.Models
         public string? Content { get; private set; }
         public string PatientId { get; private set; } 
         public string PatientName { get; private set; }
-        public Person? Patient { get; private set; } 
+        public Person? Carer { get; private set; }
+        public string? CarerId { get; private set; } 
         public BloodPressure? BloodPressure { get; private set; } = null;
         public string? BloodPressureId { get; private set; }
         public BloodSugar? BloodSugar { get; private set; } = null;
@@ -21,13 +22,14 @@ namespace HealthCareApplication.Domains.Models
         public ENotificationType Type { get; private set; } 
         public bool Seen { get; set; } = false;
         public DateTime SendAt { get; private set; }
-        public Notification( string? content, DateTime sendAt, Person patient, BloodPressure? bloodPressure, BloodSugar? bloodSugar, BodyTemperature? bodyTemperature,SpO2? spO2, ENotificationType type)
+        public Notification( string notificationId, string? content, DateTime sendAt,string patientId, string patientName, Person carer, BloodPressure? bloodPressure, BloodSugar? bloodSugar, BodyTemperature? bodyTemperature,SpO2? spO2, ENotificationType type)
         {
+            NotificationId = notificationId;
             Content = content;
-            PatientId = patient.PersonId;
+            PatientId = patientId;
             SendAt = sendAt;
-            Patient = patient;
-            PatientName = patient.Name;
+            Carer = carer;
+            PatientName = patientName;
             BloodPressure = bloodPressure;
             BloodSugar = bloodSugar;
             BodyTemperature = bodyTemperature;

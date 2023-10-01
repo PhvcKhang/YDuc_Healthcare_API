@@ -8,7 +8,7 @@ public class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Person>
 {
     public void Configure(EntityTypeBuilder<Person> builder)
     {
-        builder.HasKey(x => x.PersonId);
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).HasMaxLength(255).IsRequired();
         builder.Property(x => x.Age).IsRequired();
@@ -20,7 +20,7 @@ public class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Person>
         builder.HasMany(x => x.BloodSugars).WithOne(x => x.Person);
         builder.HasMany(x => x.BodyTemperatures).WithOne(x => x.Person);
         builder.HasMany(x => x.SpO2s).WithOne(x => x.Person);
-        builder.HasMany(x => x.Notifications).WithOne(x => x.Patient).HasForeignKey(x => x.PatientId);
+        builder.HasMany(x => x.Notifications).WithOne(x => x.Carer).HasForeignKey(x => x.CarerId);
         builder.HasMany(x => x.Patients).WithMany();
     }
 }

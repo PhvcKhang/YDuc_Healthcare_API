@@ -16,13 +16,12 @@ public class ModelToViewModelProfile : Profile
 {
     public ModelToViewModelProfile() 
     {
-        CreateMap<Person, PersonViewModel>();
-        CreateMap<Person, PatientInfoViewModel>();
+        CreateMap<Person, PatientProfileViewModel>();
         CreateMap<Person, PatientsViewModel>();
-        CreateMap<Person, DoctorInfoViewModel>();
+        CreateMap<Person, DoctorIProfileViewModel>();
         CreateMap<Person, DoctorsViewModel>();
         CreateMap<Person, RelativesViewModel>();
-        CreateMap<Person, RelativeInfoViewModel>();
+        CreateMap<Person, RelativeProfileViewModel>();
 
 
         CreateMap<Notification, NotificationViewModel>(); 

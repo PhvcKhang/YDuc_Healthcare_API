@@ -44,7 +44,7 @@ public class BloodPressureRepository : BaseRepository, IBloodPressureRepository
     {
         return await _context.BloodPressures
             .Include(x => x.Person)
-            .Where(x => x.Person.PersonId == personId
+            .Where(x => x.Person.Id == personId
                 && x.Timestamp >= timeQuery.StartTime
                 && x.Timestamp <= timeQuery.EndTime)
             .OrderByDescending (x => x.Timestamp)

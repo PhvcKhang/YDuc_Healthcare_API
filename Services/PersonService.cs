@@ -9,21 +9,25 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
+using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HealthCareApplication.Services;
 
 public class PersonService : IPersonService
 {
     #region Properties & Constructor
+    private readonly UserManager<Person> _userManager;
     private readonly IPersonRepository _personRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public PersonService(IPersonRepository personRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public PersonService(UserManager<Person> userManager, IPersonRepository personRepository, IUnitOfWork unitOfWork, IMapper mapper)
     {
+        _userManager = userManager;
         _personRepository = personRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -31,41 +35,21 @@ public class PersonService : IPersonService
     #endregion Properties & Constructor
 
     #region Person
+    public async Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel)
+    {
+        var userIdentity = _mapper.Map<Person>(registrationModel);
+
+        await _userManager.CreateAsync(userIdentity, registrationModel.Password);
+
+        await _userManager.AddToRoleAsync(userIdentity, registrationModel.PersonType.ToString().ToLowerInvariant());
+
+        return userIdentity.Id;
+    }
+
     public async Task<Person> GetPerson(string personId)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         return person;
-    }
-    public async Task<bool> CreatePerson(CreatePersonViewModel viewModel)
-    {
-
-        var person = _mapper.Map<CreatePersonViewModel, Person>(viewModel);
-        await _personRepository.Add(person);
-
-        return await _unitOfWork.CompleteAsync();
-    }
-
-    public async Task<bool> UpdatePerson(string personId, UpdatePersonViewModel viewModel)
-    {
-        var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-
-        person.Update(viewModel.Name, viewModel.Age, viewModel.Address, viewModel.PersonType, viewModel.Weight, viewModel.Height, viewModel.PhoneNumber, viewModel.Gender);
-        _personRepository.Update(person);
-
-        return await _unitOfWork.CompleteAsync();
-    }
-
-    public async Task<bool> DeletePerson(string personId)
-    {
-        await _personRepository.DeleteAsync(personId);
-        return await _unitOfWork.CompleteAsync();
-    }
-
-
-    public async Task<bool> RemoveRelationship(string personId, string patientId)
-    {
-        await _personRepository.RemoveRelationshipAsync(personId,patientId);
-        return await _unitOfWork.CompleteAsync();
     }
 
     #endregion Person
@@ -77,11 +61,11 @@ public class PersonService : IPersonService
         List<PatientsViewModel> patientsView = _mapper.Map<List<Person>, List<PatientsViewModel>>(patients);
         return patientsView;
     }
-    public async Task<PatientInfoViewModel> GetPatientInfo(string patientId)
+    public async Task<PatientProfileViewModel> GetPatientInfo(string patientId)
     {
         //listOfPeople = {patient, doctor, relative1, relative2 } respectively
         var listOfPeople = await _personRepository.GetPatientInfoAsync(patientId);
-        var patientViewModel = _mapper.Map<PatientInfoViewModel>(listOfPeople[0]);
+        var patientViewModel = _mapper.Map<PatientProfileViewModel>(listOfPeople[0]);
 
         //Demo-Only Relationship error
         if (listOfPeople.Count() == 4)
@@ -101,7 +85,7 @@ public class PersonService : IPersonService
 
         return patientViewModel;
     }
-    public async Task<Credential> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
+    public async Task<string> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId)
     {
         //Check the number of relatives
         List<Person> relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
@@ -119,19 +103,19 @@ public class PersonService : IPersonService
             //Look for the relative
             var relative = await _personRepository.GetByPhoneNumber(addNewRelativeViewModel.PhoneNumber) ?? throw new Exception("Can not find the entity");
             //Create relationship between patient and relative
-            await CreateRelationship(relative.PersonId, patientId);
-            return new Credential() { Id = relative.PersonId };
+            await CreateRelationship(relative.Id, patientId);
+            return relative.Id;
         }
         else
         {
             //Create new relative
             var relative = _mapper.Map<AddNewRelativeViewModel, Person>(addNewRelativeViewModel);
-            var entity = await _personRepository.Add(relative);
+            await _userManager.CreateAsync(relative, addNewRelativeViewModel.Password);
             await _unitOfWork.CompleteAsync();
 
             //Create relationship between patient and relative
-            await CreateRelationship(relative.PersonId, patientId);
-            return new Credential() { Id = entity.PersonId };
+            await CreateRelationship(relative.Id, patientId);
+            return relative.Id;
         }
     }
     public async Task<List<Person>> GetRelativesByPatientId(string patientId)
@@ -142,10 +126,10 @@ public class PersonService : IPersonService
     #endregion Patients
 
     #region Doctor
-    public async Task<DoctorInfoViewModel> GetDoctorInfo(string doctorId)
+    public async Task<DoctorIProfileViewModel> GetDoctorInfo(string doctorId)
     {
         var doctor = await _personRepository.GetDoctorInfoAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
-        return _mapper.Map<DoctorInfoViewModel>(doctor);
+        return _mapper.Map<DoctorIProfileViewModel>(doctor);
     }
     public async Task<List<DoctorsViewModel>?> GetAllDoctors()
     {
@@ -179,7 +163,7 @@ public class PersonService : IPersonService
         return await _personRepository.FindByIdAsync(patientId) ?? throw new ResourceNotFoundException($"Can not find out the doctor who is responsible for patient with ID: {patientId}"); 
     }
 
-    public async Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
+    public async Task<string> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
         //Check if the relative has existed
         var isExisting = await _personRepository.IsExisting(addNewPatientViewModel.PhoneNumber);
@@ -188,26 +172,28 @@ public class PersonService : IPersonService
             throw new Exception("This phone number has been registed by another person");
         }
 
-        //Create new relative
+        //Create new patient
         var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
-        var entity = await _personRepository.Add(patient);
+        await _userManager.CreateAsync(patient, addNewPatientViewModel.Password);
+        await _userManager.AddToRoleAsync(patient, addNewPatientViewModel.PersonType.ToString().ToLowerInvariant());
+
         await _unitOfWork.CompleteAsync();
 
         //Create relationship between patient and relative
-        await CreateRelationship(doctorId, patient.PersonId);
+        await CreateRelationship(doctorId, patient.Id);
 
-        return new Credential() { Id = entity.PersonId };
+        return patient.Id;
     }
     public async Task<bool> DeletePatientById(string patientId)
     {
-        List<Person> relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
+        var patient = await _personRepository.GetAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
+        var relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
 
         foreach (Person relative in relatives)
         {
-            await _personRepository.RemoveRelationshipAsync(relative.PersonId, patientId);
-            await _personRepository.DeleteAsync(relative.PersonId);
+            await _userManager.DeleteAsync(relative);
         }
-        await _personRepository.DeleteAsync(patientId);
+        await _userManager.DeleteAsync(patient);
         return await _unitOfWork.CompleteAsync();
     }
     #endregion Doctor
@@ -218,14 +204,11 @@ public class PersonService : IPersonService
         var relatives = await _personRepository.GetAllRelativesAsync() ?? throw new ResourceNotFoundException();
         return _mapper.Map<List<Person>,List<RelativesViewModel>>(relatives);
     }
-    public async Task<RelativeInfoViewModel> GetRelativeById(string relativeId)
+    public async Task<RelativeProfileViewModel> GetRelativeById(string relativeId)
     {
         var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
-        return _mapper.Map<RelativeInfoViewModel>(relative);
+        return _mapper.Map<RelativeProfileViewModel>(relative);
     }
-
-
-
     #endregion Relative
 
 }

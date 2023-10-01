@@ -33,7 +33,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         public async Task<List<SpO2>> GetAllAsync(string personId, TimeQuery timeQuery)
         {
             var spO2s = await _context.SpO2s
-                .Where(x => x.Person.PersonId == personId 
+                .Where(x => x.Person.Id == personId 
                 && x.Timestamp >= timeQuery.StartTime
                 && x.Timestamp <= timeQuery.EndTime)
                 .OrderByDescending(x => x.Timestamp)

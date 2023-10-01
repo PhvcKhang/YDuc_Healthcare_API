@@ -44,7 +44,7 @@ public class BodyTemperatureRepository : BaseRepository, IBodyTemperatureReposit
     {
         return await _context.BodyTemperatures
             .Include(x => x.Person)
-            .Where(x => x.Person.PersonId == personId
+            .Where(x => x.Person.Id == personId
                 && x.Timestamp >= timeQuery.StartTime
                 && x.Timestamp <= timeQuery.EndTime)
             .OrderByDescending(x => x.Timestamp)

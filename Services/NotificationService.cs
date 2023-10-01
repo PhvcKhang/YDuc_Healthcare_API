@@ -38,29 +38,15 @@ namespace HealthCareApplication.Services
         }
         public async Task<bool> ChangeStatus(string notificationId)
         {
-             _notificationRepository.ChangeStatusAsync(notificationId);
+            _notificationRepository.ChangeStatusAsync(notificationId);
             return await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<NumberOfNotifications> GetUnseenNotifications(string personId)
+        public async Task<int> GetUnseenNotifications(string personId)
         {
-            List<Person> patients = await _personRepository.GetPatientsByIdAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-            List<Notification> notificationsOfCarer = new();
-            foreach (Person patient in patients)
-            {
-                var notificationsOfPatient = await _notificationRepository.GetByPatientAsync(patient);
-                foreach (Notification notification in notificationsOfPatient)
-                {
-                    notificationsOfCarer.Add(notification);
-                }
-            }
+            var notificationsOfCarer = await _notificationRepository.GetByCarerIdAsync(personId);
             var unseenNotifications = notificationsOfCarer.Where(x => x.Seen == false).ToList();
-            NumberOfNotifications numberOfNotifications = new()
-            {
-                numberOfNotifications = unseenNotifications.Count
-            };
-            return numberOfNotifications;
-
+            return unseenNotifications.Count;
         }
 
         public async Task<bool> Delete(string notificationId)
@@ -69,46 +55,29 @@ namespace HealthCareApplication.Services
             return await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<NumberOfNotifications> GetNumberOfNotifications(string personId)
+        public async Task<int> GetNumberOfNotifications(string personId)
         {
-            List<Person> patients = await _personRepository.GetPatientsByIdAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-            List<Notification> notificationsOfCarer = new();
-            foreach (Person patient in patients)
-            {
-                var notificationsOfPatient = await _notificationRepository.GetByPatientAsync(patient);
-                foreach (Notification notification in notificationsOfPatient)
-                {
-                    notificationsOfCarer.Add(notification);
-                }
-            }
-            NumberOfNotifications numberOfNotifications = new()
-            {
-                numberOfNotifications = notificationsOfCarer.Count
-            }; 
-            return numberOfNotifications;
+
+            var notificationsOfCarer = await _notificationRepository.GetByCarerIdAsync(personId);
+
+            return notificationsOfCarer.Count;
         }
 
         public async Task<List<NotificationViewModel>> GetRangeById(string personId, int startIndex, int lastIndex)
         {
-            List<Person> patients = await _personRepository.GetPatientsByIdAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
-            List<Notification> notificationsOfCarer = new();
-            foreach (Person patient in patients)
-            {
-                var notificationsOfPatient = await _notificationRepository.GetByPatientAsync(patient);
-                foreach (Notification notification in notificationsOfPatient)
-                {
-                    notificationsOfCarer.Add(notification);
-                }
-            }
+
+            var notificationsOfCarer = await _notificationRepository.GetByCarerIdAsync(personId);
+
             var count = notificationsOfCarer.Count;
-            if(count < lastIndex-startIndex && count != 0)
+            if (count < lastIndex - startIndex && count != 0)
             {
-                lastIndex = count-1;
+                lastIndex = count - 1;
             }
-            if(count == 0)
+            if (count == 0)
             {
                 lastIndex = 0;
             }
+
             List<Notification> notificationSource = notificationsOfCarer.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex);
             var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notificationSource);
             return viewModel;

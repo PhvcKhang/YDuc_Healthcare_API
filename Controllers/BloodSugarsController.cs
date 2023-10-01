@@ -51,10 +51,14 @@ public class BloodSugarsController : Controller
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " blood sugar readings";
             ENotificationType notificationType = ENotificationType.BloodSugar;
 
-            var notification = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodSugar: newBloodSugar);
+            var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodSugar: newBloodSugar);
 
             //Add user-defined sample of this notification to database
-            await _notificationService.CreateNotification(notification);
+            foreach (Notification notification in notifications)
+            {
+                await _notificationService.CreateNotification(notification);
+
+            }
             return Ok(true);
         }
         catch (Exception ex)

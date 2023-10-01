@@ -49,11 +49,14 @@ public class BodyTemperaturesController : Controller
             var ENcontent = "Patient " + patient.Name + " has just updated " + pronounce + " body temperature readings";
             ENotificationType notificationType = ENotificationType.BodyTemperature;
 
-            var notification = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
+            var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
 
             //Add user-defined sample of this notification to database
-            await _notificationService.CreateNotification(notification);
+            foreach (Notification notification in notifications)
+            {
+                await _notificationService.CreateNotification(notification);
 
+            }
             return Ok(true);
         }
         catch (Exception ex)

@@ -2,8 +2,8 @@
 {
     public class RelativesViewModel
     {
-            public string PersonId { get; set; }
-            public string Name { get; set; }
-            public string PhoneNumber { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

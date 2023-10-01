@@ -8,32 +8,30 @@ namespace HealthCareApplication.Domains.Services;
 
 public interface IPersonService
 {
-    #region Person
+    #region Admin
+    public Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel);
     public Task<Person> GetPerson(string personId);
-    public Task<bool> CreatePerson(CreatePersonViewModel viewModel);
-    public Task<bool> UpdatePerson(string personId, UpdatePersonViewModel viewModel);
-    public Task<bool> DeletePerson(string personId);
-    public Task<bool> RemoveRelationship(string personId, string patientId);
-    #endregion Person
+
+    #endregion Admin
 
     #region Patient
     public Task<List<PatientsViewModel>> GetAllPatients();
-    public Task<PatientInfoViewModel> GetPatientInfo(string patientId);
-    public Task<Credential> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
+    public Task<PatientProfileViewModel> GetPatientInfo(string patientId);
     public Task<List<Person>> GetRelativesByPatientId(string patientId);
+    public Task<string> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
     #endregion Patient
 
     #region Doctor
-    public Task<DoctorInfoViewModel> GetDoctorInfo(string doctorId);
+    public Task<DoctorIProfileViewModel> GetDoctorInfo(string doctorId);
     public Task<List<DoctorsViewModel>?> GetAllDoctors();
     public Task<Person> FindDoctorByPatientId(string patientId);
-    public Task<Credential> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId);
+    public Task<string> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId);
     public Task<bool> DeletePatientById(string patientId);
     #endregion Doctor
 
     #region Relative
     public Task<List<RelativesViewModel>> GetAllRelatives();
-    public Task<RelativeInfoViewModel> GetRelativeById(string relativeId);
+    public Task<RelativeProfileViewModel> GetRelativeById(string relativeId);
 
     #endregion Relative
 }

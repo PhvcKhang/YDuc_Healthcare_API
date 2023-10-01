@@ -1,10 +1,11 @@
 ﻿using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Domains.Persistence.Contexts.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthCareApplication.Domains.Persistence.Contexts;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<Person>
 {
     public DbSet<Person> Persons { get; set; }
     public DbSet<BloodPressure> BloodPressures { get; set; }
@@ -17,6 +18,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new PersonEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BloodPressureEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BloodSugarEntityTypeConfiguration());

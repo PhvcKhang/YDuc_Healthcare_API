@@ -53,16 +53,32 @@ namespace HealthCareApplication.Controllers
          }
         [HttpGet]
         [Route("{personId}/Unseen")]
-        public async Task<NumberOfNotifications> UnseenNotifications([FromRoute]string personId)
+        public async Task<IActionResult> UnseenNotifications([FromRoute]string personId)
         {
-            return await _notificationService.GetUnseenNotifications(personId);
+            try
+            {
+                var result = await _notificationService.GetUnseenNotifications(personId);
+                return new OkObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [Route("{personId}/Count")]
-        public async Task<NumberOfNotifications> GetNumberOfNotifications([FromRoute]string personId)
+        public async Task<IActionResult> GetNumberOfNotifications([FromRoute]string personId)
         {
-            return await _notificationService.GetNumberOfNotifications(personId);
+            try
+            {
+                var result = await _notificationService.GetNumberOfNotifications(personId);
+                return new OkObjectResult(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete]
         [Route("{notificationId}")]

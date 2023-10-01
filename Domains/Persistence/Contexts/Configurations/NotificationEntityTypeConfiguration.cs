@@ -9,7 +9,6 @@ namespace HealthCareApplication.Domains.Persistence.Contexts.Configurations
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
             builder.HasKey(x => x.NotificationId);
-            builder.Property(x => x.NotificationId).HasDefaultValueSql("NEWID()");
 
             builder.Property(x => x.Heading).HasMaxLength(255);
             builder.Property(x => x.Content).HasMaxLength(255);

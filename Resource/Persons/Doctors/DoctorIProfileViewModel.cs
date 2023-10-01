@@ -6,12 +6,12 @@ using HealthCareApplication.Resource.Notification;
 
 namespace HealthCareApplication.Resource.Persons.Doctors
 {
-    public class DoctorInfoViewModel
+    public class DoctorIProfileViewModel
     {
-        public string PersonId { get; set; }
+        public string Id { get; private set; }
         public string Name { get; private set; }
         public int Age { get; private set; }
-        public string Address { get; private set; }
+        public string Address { get; private set; } = string.Empty;
         public EPersonGender Gender { get; private set; }
         public EPersonType PersonType { get; private set; }
         public string? PhoneNumber { get; private set; }

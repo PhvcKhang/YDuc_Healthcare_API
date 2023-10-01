@@ -3,7 +3,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using HealthCareApplication.Domains.Persistence.Exceptions;
 using HealthCareApplication.Domains.Repositories;
 using HealthCareApplication.Extensions.Exceptions;
-using HealthCareApplication.Migrations;
+//using HealthCareApplication.Migrations;
 using HealthCareApplication.Resource.Notification;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,8 +24,6 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             {
                 throw new EntityDuplicationException(nameof(Notification), notification.NotificationId);
             }
-            //Person doctor = _context.Persons.FirstOrDefault(x => x.PersonId == doctorId);
-
             return _context.Notifications.Add(notification).Entity;
         }
         public async Task<List<Notification>> GetAllAsync()
@@ -63,28 +61,24 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
                 .Entity;
         }
 
-        public async Task<NumberOfNotifications> GetNumberOfNotificationsAsync(string doctorId)
+        public async Task<int> GetNumberOfNotificationsAsync(string doctorId)
         {
-            var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.PersonId == doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
-            List<Notification> notifications = await _context.Notifications.Where(x => x.Patient == doctor).ToListAsync();
-            NumberOfNotifications count = new()
-            {
-                numberOfNotifications = notifications.Count(),
-            };
-            return count;
+            var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Id == doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
+            List<Notification> notifications = await _context.Notifications.Where(x => x.Carer == doctor).ToListAsync();
+
+            return notifications.Count;
         }
 
-        public async Task<List<Notification>> GetByPatientAsync(Person patient)
+        public async Task<List<Notification>> GetByCarerIdAsync(string carerId)
         {
-            List<Notification> notifications = await _context.Notifications
-                .Include(x => x.BloodPressure)
-                .Include(x => x.BloodPressure)
-                .Include(x => x.BodyTemperature)
-                .Include(x => x.SpO2)
-                .Where(x => x.Patient == patient).ToListAsync();
+            var notifications = await _context.Notifications
+            .Include(x => x.BloodPressure)
+            .Include(x => x.BloodSugar)
+            .Include(x => x.BodyTemperature)
+            .Include(x => x.SpO2)
+            .Where(x => x.CarerId == carerId)
+            .ToListAsync();
             return notifications;
-
         }
-
     }
 }

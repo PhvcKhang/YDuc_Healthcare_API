@@ -21,78 +21,35 @@ public class PersonsController : Controller
     #region Properties & Constructor
     private readonly IPersonService _personService;
 
-    private readonly NotificationHelper _pushNotification;
-
     public PersonsController(IPersonService personService)
     {
         _personService = personService;
-        _pushNotification = new NotificationHelper();
 
     }
     #endregion Properties & Constructor
 
-    #region Person
+    #region Admin
     [HttpPost]
-    public async Task<IActionResult> CreatePerson([FromBody] CreatePersonViewModel person)
+    [Route("CreateDoctorAccount")]
+    public async Task<IActionResult> CreateDoctorAccount([FromBody] DoctorRegistrationViewModel registrationModel)
     {
         try
         {
-            var result = await _personService.CreatePerson(person);
-            return Ok(result);
+            var result = await _personService.CreateDoctorAccount(registrationModel);
+            return new OkObjectResult($"DoctorId: {result}");
         }
         catch (Exception ex)
         {
-            var errorMessage = new ErrorMessage(ex);
-            return BadRequest(errorMessage);
+            return BadRequest(ex.Message);
         }
-    }
 
-    [HttpPut]
-    [Route("{personId}")]
-    public async Task<IActionResult> UpdatePerson([FromRoute] string personId, [FromBody] UpdatePersonViewModel person)
-    {
-        try
-        {
-            var result = await _personService.UpdatePerson(personId, person);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            var errorMessage = new ErrorMessage(ex);
-            return BadRequest(errorMessage);
-        }
     }
-
-    [HttpGet]
-    [Route("{personId}")]
-    public async Task<Person> GetPerson([FromRoute] string personId)
-    {
-        var result = await _personService.GetPerson(personId);
-        return result;
-    }
-
-    [HttpDelete]
-    [Route("{personId}")]
-    public async Task<IActionResult> DeletePerson([FromRoute] string personId)
-    {
-        try
-        {
-            var result = await _personService.DeletePerson(personId);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            var errorMessage = new ErrorMessage(ex);
-            return BadRequest(errorMessage);
-        }
-    }
-
-        #endregion Person
+    #endregion Admin
     
     #region Patient
     [HttpGet]
-    [Route("PatientInfo/{patientId}")]
-    public async Task<PatientInfoViewModel> GetPatientInfo([FromRoute] string patientId)
+    [Route("PatientProfile/{patientId}")]
+    public async Task<PatientProfileViewModel> GetPatientInfo([FromRoute] string patientId)
     {
         return await _personService.GetPatientInfo(patientId);
     }
@@ -106,33 +63,27 @@ public class PersonsController : Controller
 
     [HttpPost]
     [Route("{patientId}/AddRelative")]
-    public async Task<Credential> AddRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
-    {
-
-        var result =  await _personService.AddRelative(addNewRelativeViewModel, patientId);
-        return result;
-    }
-
-    [HttpPut]
-    [Route("{personId}/RemoveRelationship/{patientId}")]
-    public async Task<IActionResult> RemoveRelationship([FromRoute] string personId, [FromRoute] string patientId)
+    public async Task<IActionResult> AddRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
     {
         try
         {
-            var result = await _personService.RemoveRelationship(personId, patientId);
-            return Ok(result);
+            var result = await _personService.AddRelative(addNewRelativeViewModel, patientId);
+            return new OkObjectResult($"RelativetId: {result}");
+            
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
+
     #endregion Patient
 
     #region Doctor
     [HttpGet]
-    [Route("DoctorInfo/{doctorId}")]
-    public async Task<DoctorInfoViewModel> GetDoctorInfo([FromRoute] string doctorId)
+    [Route("DoctorProfile/{doctorId}")]
+    [Authorize]
+    public async Task<DoctorIProfileViewModel> GetDoctorInfo([FromRoute] string doctorId)
     {
         return await _personService.GetDoctorInfo(doctorId);
     }
@@ -146,10 +97,18 @@ public class PersonsController : Controller
 
     [HttpPost]
     [Route("{doctorId}/AddNewPatient")]
-    public async Task<Credential> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
+    public async Task<IActionResult> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
+        try
+        {
             var result = await _personService.AddNewPatient(addNewPatientViewModel, doctorId);
-            return result;
+            return new OkObjectResult($"PatientId: {result}");
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
     }
     [HttpDelete]
     [Route("DeletePatient/{patientId}")]
@@ -176,8 +135,8 @@ public class PersonsController : Controller
     }
 
     [HttpGet]
-    [Route("RelativeInfo/{relativeId}")]
-    public async Task<RelativeInfoViewModel> GetRelativeById( [FromRoute]string relativeId)
+    [Route("RelativeProfile/{relativeId}")]
+    public async Task<RelativeProfileViewModel> GetRelativeById( [FromRoute]string relativeId)
     {
         return await _personService.GetRelativeById(relativeId);
     }

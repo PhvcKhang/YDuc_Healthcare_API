@@ -10,7 +10,7 @@ public class ResourceToModelProfile : Profile
 {
     public ResourceToModelProfile() 
     {
-        CreateMap<CreatePersonViewModel, Person>();
+        CreateMap<DoctorRegistrationViewModel, Person>();
 
         CreateMap<AddNewRelativeViewModel, Person>();
         CreateMap<AddNewPatientViewModel, Person>();

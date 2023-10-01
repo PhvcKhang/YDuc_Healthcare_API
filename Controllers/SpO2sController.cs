@@ -61,12 +61,14 @@ namespace HealthCareApplication.Controllers
 
                 ENotificationType notificationType = ENotificationType.SpO2;
 
-                var notification = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, spO2: newSpO2);
+                var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, spO2: newSpO2);
 
                 //Add user-defined sample of this notification to database
-                await _notificationService.CreateNotification(notification);
+                foreach (Notification notification in notifications)
+                {
+                    await _notificationService.CreateNotification(notification);
 
-
+                }
                 return Ok(true);
             }
             catch (Exception ex)

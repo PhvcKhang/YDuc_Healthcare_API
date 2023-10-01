@@ -1,5 +1,6 @@
 ﻿using HealthCareApplication.Identity.Models;
 using Microsoft.Extensions.Options;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -25,18 +26,21 @@ namespace HealthCareApplication.Identity.Authentication
             });
         }
 
-        public async Task<string> GenerateEncodedToken(string userName, ClaimsIdentity identity, string role)
+        public async Task<string> GenerateEncodedToken(string userName, ClaimsIdentity identity, IEnumerable<string> roles)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userName),
                 new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
-                new Claim(ClaimTypes.Role, role),
+
                 identity.FindFirst(Helpers.Constants.Strings.JwtClaimIdentifiers.Rol),
                 identity.FindFirst(Helpers.Constants.Strings.JwtClaimIdentifiers.Id),
             };
-
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             // Create the JWT security token and encode it.
             var jwt = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,

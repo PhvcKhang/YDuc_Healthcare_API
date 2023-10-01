@@ -8,9 +8,9 @@ using HealthCareApplication.Resource.SpO2;
 
 namespace HealthCareApplication.Resource.Persons
 {
-    public class PatientInfoViewModel
+    public class PatientProfileViewModel
     {
-        public string PersonId { get; set; }
+        public string Id { get; set; }
         public string Name { get; private set; }
         public int Age { get; private set; }
         public string Address { get; private set; } 

@@ -54,11 +54,14 @@ public class BloodPressuresController : Controller
 
             ENotificationType notificationType = ENotificationType.BloodPressure;
 
-            var notification =  await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodPressure: newBloodPressure);
+            var notifications =  await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodPressure: newBloodPressure);
 
             //Add this notification to our database
-            await _notificationService.CreateNotification(notification);
+            foreach(Notification notification in notifications)
+            {
+                await _notificationService.CreateNotification(notification);
 
+            }
             return Ok(true);
         }
         catch (Exception ex)

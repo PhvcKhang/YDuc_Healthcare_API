@@ -3,9 +3,9 @@
 
 namespace HealthCareApplication.Resource.Persons.Relatives
 {
-    public class RelativeInfoViewModel
+    public class RelativeProfileViewModel
     {
-        public string PersonId { get; set; }
+        public string Id { get; set; }
         public string Name { get; private set; }
         public int Age { get; private set; }
         public string Address { get; private set; }
