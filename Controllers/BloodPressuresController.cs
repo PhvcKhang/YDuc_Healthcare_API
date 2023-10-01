@@ -14,7 +14,7 @@ using System.Globalization;
 namespace HealthCareApplication.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class BloodPressuresController : Controller
 {
     private readonly IBloodPressureService _bloodPressureService;
@@ -30,22 +30,22 @@ public class BloodPressuresController : Controller
     }
 
     [HttpPost]
-    [Route("{personId}")] //P107982209863 - D057298409432
-    public async Task<IActionResult> CreateBloodPressure([FromRoute] string personId, [FromBody] CreateBloodPressureViewModel bloodPressure)
+    [Route("{patientId}")] 
+    public async Task<IActionResult> CreateBloodPressure([FromRoute] string patientId, [FromBody] CreateBloodPressureViewModel bloodPressure)
     {
         try
         {
 
             //Create a new statistic
-            var newBloodPressure = await _bloodPressureService.CreateBloodPressure(personId, bloodPressure);
+            var newBloodPressure = await _bloodPressureService.CreateBloodPressure(patientId, bloodPressure);
             var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor, relatives who responsibilizes for this patient 
-            Person doctor = await _personService.FindDoctorByPatientId(personId);
-            List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
+            Person doctor = await _personService.FindDoctorByPatientId(patientId);
+            List<Person> relatives = await _personService.GetRelativesByPatientId(patientId);
 
             //Look for the patient
-            Person patient = await _personService.GetPerson(personId);
+            Person patient = await _personService.GetPerson(patientId);
 
             //Push Notificaiton to OneSignal
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
@@ -79,9 +79,9 @@ public class BloodPressuresController : Controller
     }
 
     [HttpGet]
-    [Route("{personId}")]
-    public async Task<List<BloodPressureViewModel>> GetBloodPressures([FromRoute] string personId, [FromQuery] TimeQuery timeQuery)
+    [Route("{patientId}")]
+    public async Task<List<BloodPressureViewModel>> GetBloodPressures([FromRoute] string patientId, [FromQuery] TimeQuery timeQuery)
     {
-        return await _bloodPressureService.GetBloodPressures(personId, timeQuery);
+        return await _bloodPressureService.GetBloodPressures(patientId, timeQuery);
     }
 }

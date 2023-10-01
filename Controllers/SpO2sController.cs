@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthCareApplication.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class SpO2sController : Controller
     {
@@ -30,28 +30,28 @@ namespace HealthCareApplication.Controllers
         }
 
         [HttpGet]
-        [Route("{personId}")]
-        public async Task<List<SpO2ViewModel>> GetAll([FromRoute] string personId, [FromQuery] TimeQuery timeQuery )
+        [Route("{patientId}")]
+        public async Task<List<SpO2ViewModel>> GetAll([FromRoute] string patientId, [FromQuery] TimeQuery timeQuery )
         {
-            return await _spO2Service.GetAll(personId, timeQuery);    
+            return await _spO2Service.GetAll(patientId, timeQuery);    
         }
         [HttpPost]
-        [Route("{personId}")]
-        public async Task<IActionResult> CreateSpO2([FromRoute] string personId, [FromBody] CreateSpO2ViewModel spO2)
+        [Route("{patientId}")]
+        public async Task<IActionResult> CreateSpO2([FromRoute] string patientId, [FromBody] CreateSpO2ViewModel spO2)
         {
             try
             {
 
                 //Create a new statistic
-                var newSpO2 = await _spO2Service.CreateSpO2(personId, spO2);
+                var newSpO2 = await _spO2Service.CreateSpO2(patientId, spO2);
                 var updatedDate = DateTime.Now.ToString();
 
                 //Look for the doctor who responsibilizes for this patient 
-                Person doctor = await _personService.FindDoctorByPatientId(personId);
-                List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
+                Person doctor = await _personService.FindDoctorByPatientId(patientId);
+                List<Person> relatives = await _personService.GetRelativesByPatientId(patientId);
 
                 //Look for the patient
-                Person patient = await _personService.GetPerson(personId);
+                Person patient = await _personService.GetPerson(patientId);
 
 
                 //Push Notificaiton to OneSignal

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HealthCareApplication.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class BloodSugarsController : Controller
 {
     private readonly IBloodSugarService _bloodSugarService;
@@ -29,21 +29,21 @@ public class BloodSugarsController : Controller
     }
 
     [HttpPost]
-    [Route("{personId}")]
-    public async Task<IActionResult> CreateBloodSugar([FromRoute] string personId, [FromBody] CreateBloodSugarViewModel bloodSugar)
+    [Route("{patientId}")]
+    public async Task<IActionResult> CreateBloodSugar([FromRoute] string patientId, [FromBody] CreateBloodSugarViewModel bloodSugar)
     {
         try
         {
             //Create a new statistic
-            BloodSugar newBloodSugar = await _bloodSugarService.CreateBloodSugar(personId, bloodSugar);
+            BloodSugar newBloodSugar = await _bloodSugarService.CreateBloodSugar(patientId, bloodSugar);
             var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor who responsibilizes for this patient 
-            Person doctor = await _personService.FindDoctorByPatientId(personId);
-            List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
+            Person doctor = await _personService.FindDoctorByPatientId(patientId);
+            List<Person> relatives = await _personService.GetRelativesByPatientId(patientId);
 
             //Push Notification to Doctor
-            Person patient = await _personService.GetPerson(personId);
+            Person patient = await _personService.GetPerson(patientId);
 
             //Push Notificaiton to OneSignal
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
@@ -76,9 +76,9 @@ public class BloodSugarsController : Controller
     }
 
     [HttpGet]
-    [Route("{personId}")]
-    public async Task<List<BloodSugarViewModel>> GetBloodSugars([FromRoute] string personId, [FromQuery] TimeQuery timeQuery)
+    [Route("{patientId}")]
+    public async Task<List<BloodSugarViewModel>> GetBloodSugars([FromRoute] string patientId, [FromQuery] TimeQuery timeQuery)
     {
-        return await _bloodSugarService.GetBloodSugars(personId, timeQuery);
+        return await _bloodSugarService.GetBloodSugars(patientId, timeQuery);
     }
 }

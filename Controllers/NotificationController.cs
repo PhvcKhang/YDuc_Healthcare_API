@@ -12,7 +12,7 @@ using RestSharp;
 namespace HealthCareApplication.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class NotificationController : Controller
     {
         private readonly NotificationHelper _notificaitonHelper;

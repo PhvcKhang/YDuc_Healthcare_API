@@ -15,13 +15,13 @@ using System.Diagnostics;
 namespace HealthCareApplication.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class PersonsController : Controller
+[Route("[controller]")]
+public class UsersController : Controller
 {
     #region Properties & Constructor
     private readonly IPersonService _personService;
 
-    public PersonsController(IPersonService personService)
+    public UsersController(IPersonService personService)
     {
         _personService = personService;
 
@@ -62,7 +62,7 @@ public class PersonsController : Controller
     }
 
     [HttpPost]
-    [Route("{patientId}/AddRelative")]
+    [Route("{patientId}/CreateRelativeAccount")]
     public async Task<IActionResult> AddRelative([FromBody] AddNewRelativeViewModel addNewRelativeViewModel, [FromRoute] string patientId)
     {
         try
@@ -96,7 +96,7 @@ public class PersonsController : Controller
     }
 
     [HttpPost]
-    [Route("{doctorId}/AddNewPatient")]
+    [Route("{doctorId}/CreatePatientAccount")]
     public async Task<IActionResult> AddNewPatient([FromBody] AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
         try

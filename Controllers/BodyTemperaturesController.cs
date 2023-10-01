@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HealthCareApplication.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class BodyTemperaturesController : Controller
 {
     private readonly IBodyTemperatureService _bodyTemperatureService;
@@ -27,21 +27,21 @@ public class BodyTemperaturesController : Controller
     }
 
     [HttpPost]
-    [Route("{personId}")]
-    public async Task<IActionResult> CreateBodyTemperature([FromRoute] string personId, [FromBody] CreateBodyTemperatureViewModel bodyTemperature)
+    [Route("{patientId}")]
+    public async Task<IActionResult> CreateBodyTemperature([FromRoute] string patientId, [FromBody] CreateBodyTemperatureViewModel bodyTemperature)
     {
         try
         {
             //Create a new statistic
-            var newBodyTemperature = await _bodyTemperatureService.CreateBodyTemperature(personId, bodyTemperature);
+            var newBodyTemperature = await _bodyTemperatureService.CreateBodyTemperature(patientId, bodyTemperature);
             var updatedDate = DateTime.Now.ToString();
 
             //Look for the doctor who responsibilizes for this patient 
-            Person doctor = await _personService.FindDoctorByPatientId(personId);
-            List<Person> relatives = await _personService.GetRelativesByPatientId(personId);
+            Person doctor = await _personService.FindDoctorByPatientId(patientId);
+            List<Person> relatives = await _personService.GetRelativesByPatientId(patientId);
 
             //Push Notification to Doctor
-            Person patient = await _personService.GetPerson(personId);
+            Person patient = await _personService.GetPerson(patientId);
 
             //Push Notificaiton to OneSignal
             var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
@@ -74,9 +74,9 @@ public class BodyTemperaturesController : Controller
     }
 
     [HttpGet]
-    [Route("{personId}")]
-    public async Task<List<BodyTemperatureViewModel>> GetBodyTemperatures([FromRoute] string personId, [FromQuery] TimeQuery timeQuery)
+    [Route("{patientId}")]
+    public async Task<List<BodyTemperatureViewModel>> GetBodyTemperatures([FromRoute] string patientId, [FromQuery] TimeQuery timeQuery)
     {
-        return await _bodyTemperatureService.GetBodyTemperatures(personId, timeQuery);
+        return await _bodyTemperatureService.GetBodyTemperatures(patientId, timeQuery);
     }
 }
