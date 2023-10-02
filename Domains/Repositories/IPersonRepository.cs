@@ -5,10 +5,11 @@ namespace HealthCareApplication.Domains.Repositories;
 
 public interface IPersonRepository
 {
-    #region Person
+    #region User
     public Task<Person?> GetAsync(string personId);
     public Task<Person?> GetByPhoneNumber(string phoneNumber);
     public Task<Person?> GetPersonWithPatientsAsync(string personId);
+    public Task<Person> RemoveRelationshipAsync(string carerId, string patientId);
     #endregion Person
 
     #region Patient

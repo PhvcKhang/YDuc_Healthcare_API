@@ -10,9 +10,14 @@ public interface IPersonService
 {
     #region Admin
     public Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel);
+    public Task<bool> DeleteDoctorAccount(string doctorId);
     public Task<Person> GetPerson(string personId);
 
     #endregion Admin
+
+    #region User
+    public Task<bool> ChangePassword(string userId, string currentPassword, string newPassword);
+    #endregion User
 
     #region Patient
     public Task<List<PatientsViewModel>> GetAllPatients();

@@ -44,8 +44,39 @@ public class UsersController : Controller
         }
 
     }
+    [HttpDelete]
+    [Route("DeleteDoctorAccount/{doctorId}")]
+    public async Task<IActionResult> DeleteDoctorAccount(string doctorId)
+    {
+        try
+        {
+            var result = await _personService.DeleteDoctorAccount(doctorId);
+            return Ok(result);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
     #endregion Admin
-    
+
+    #region User
+    [HttpPatch]
+    [Route("ChangePassword/{userId}")]
+    public async Task<IActionResult> ChangePassword([FromRoute] string userId, string currentPassword, string newPassword)
+    {
+        try
+        {
+            var result = await _personService.ChangePassword(userId, currentPassword, newPassword);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    #endregion User
+
     #region Patient
     [HttpGet]
     [Route("PatientProfile/{patientId}")]

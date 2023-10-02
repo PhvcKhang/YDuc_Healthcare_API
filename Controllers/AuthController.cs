@@ -15,19 +15,21 @@ using System.Security.Claims;
 
 namespace HealthCareApplication.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : Controller
     {
         private readonly UserManager<Person> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
+        private readonly IMapper _mapper;
 
         public AuthController(UserManager<Person> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IMapper mapper)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -45,10 +47,11 @@ namespace HealthCareApplication.Controllers
                 var roles = await _userManager.GetRolesAsync(user);
                 var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, credentials.Username, roles, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
 
+                var userViewModel = _mapper.Map<UserViewModel>(user);
                 var loginResource = new LoginResource()
                 {
                     Token = jwt,
-                    User = user,
+                    User = userViewModel,
                     Roles = roles.ToList(),
                 };
 

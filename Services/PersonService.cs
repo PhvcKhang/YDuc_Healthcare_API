@@ -34,7 +34,7 @@ public class PersonService : IPersonService
     }
     #endregion Properties & Constructor
 
-    #region Person
+    #region Admin
     public async Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel)
     {
         var userIdentity = _mapper.Map<Person>(registrationModel);
@@ -45,14 +45,52 @@ public class PersonService : IPersonService
 
         return userIdentity.Id;
     }
+    public async Task<bool> DeleteDoctorAccount(string doctorId)
+    {
 
+        var doctor = await _personRepository.GetPersonWithPatientsAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
+
+        List<Person> patients = new();
+        patients.AddRange(doctor.Patients);
+
+        foreach (var patient in patients)
+        {
+            var relatives = await _personRepository.GetRelativesByPatientIdAsync(patient.Id);
+            foreach (var relative in relatives)
+            {
+                await _personRepository.RemoveRelationshipAsync(relative.Id, patient.Id);
+                await _userManager.DeleteAsync(relative);
+            }
+            await _personRepository.RemoveRelationshipAsync(doctor.Id, patient.Id);
+            await _userManager.DeleteAsync(patient);
+        }
+
+        await _userManager.DeleteAsync(doctor);
+
+        return await _unitOfWork.CompleteAsync();
+        
+    }
     public async Task<Person> GetPerson(string personId)
     {
         var person = await _personRepository.GetAsync(personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         return person;
     }
 
-    #endregion Person
+    #endregion Admin
+
+    #region User
+    public async Task<bool> ChangePassword(string userId, string currentPassword, string newPassword)
+    {
+        var user = await _userManager.FindByIdAsync(userId) ?? throw new ResourceNotFoundException(nameof(Person), userId); ;
+
+        var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        if(result.Succeeded is not true)
+        {
+            throw new InvalidOperationException("Password is invalid");
+        }
+        return result.Succeeded;
+    }
+    #endregion User
 
     #region Patients
     public async Task<List<PatientsViewModel>> GetAllPatients()
@@ -189,8 +227,9 @@ public class PersonService : IPersonService
         var patient = await _personRepository.GetAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         var relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
 
-        foreach (Person relative in relatives)
+        foreach (var relative in relatives)
         {
+            await _personRepository.RemoveRelationshipAsync(relative.Id, patient.Id);
             await _userManager.DeleteAsync(relative);
         }
         await _userManager.DeleteAsync(patient);
@@ -209,6 +248,8 @@ public class PersonService : IPersonService
         var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
         return _mapper.Map<RelativeProfileViewModel>(relative);
     }
+
+
     #endregion Relative
 
 }

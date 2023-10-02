@@ -18,7 +18,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
     }
 
-    #region Person
+    #region User
 
     public async Task<Person?> GetAsync(string personId)
     {
@@ -50,7 +50,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
             .Update(person)
             .Entity;
     }
-    #endregion Person
+    #endregion User
 
     #region Patient
     public async Task<List<Person>> GetAllAsync()
@@ -176,6 +176,8 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
         return await _context.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
     }
+
+
 
     #endregion Relative
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HealthCareApplication.Domains.Models;
-
+using HealthCareApplication.Identity.Resources;
 using HealthCareApplication.Resource.BloodPressure;
 using HealthCareApplication.Resource.BloodSugar;
 using HealthCareApplication.Resource.BodyTemperature;
@@ -22,7 +22,7 @@ public class ModelToViewModelProfile : Profile
         CreateMap<Person, DoctorsViewModel>();
         CreateMap<Person, RelativesViewModel>();
         CreateMap<Person, RelativeProfileViewModel>();
-
+        CreateMap<Person, UserViewModel>();
 
         CreateMap<Notification, NotificationViewModel>(); 
 

@@ -13,12 +13,12 @@ namespace HealthCareApplication.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class NotificationController : Controller
+    public class NotificationsController : Controller
     {
         private readonly NotificationHelper _notificaitonHelper;
         private readonly INotificationService _notificationService;
 
-        public NotificationController(INotificationService notificationService)
+        public NotificationsController(INotificationService notificationService)
         {
             _notificaitonHelper = new NotificationHelper();
             _notificationService = notificationService;
