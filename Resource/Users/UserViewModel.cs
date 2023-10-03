@@ -1,4 +1,4 @@
-﻿namespace HealthCareApplication.Identity.Resources
+﻿namespace HealthCareApplication.Resource.Users
 {
     public class UserViewModel
     {

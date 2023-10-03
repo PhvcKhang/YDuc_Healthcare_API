@@ -9,6 +9,7 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.SpO2;
+using HealthCareApplication.Resource.Users;
 
 namespace HealthCareApplication.Mapping;
 

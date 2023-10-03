@@ -5,6 +5,7 @@ using HealthCareApplication.Identity.Helpers;
 using HealthCareApplication.Identity.Models;
 using HealthCareApplication.Identity.Resources;
 using HealthCareApplication.Resource.Persons;
+using HealthCareApplication.Resource.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

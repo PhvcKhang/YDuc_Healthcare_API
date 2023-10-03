@@ -9,6 +9,7 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
+using HealthCareApplication.Resource.Users;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -89,6 +90,14 @@ public class PersonService : IPersonService
             throw new InvalidOperationException("Password is invalid");
         }
         return result.Succeeded;
+    }
+    public async Task<bool> UpdateProfile(UpdateProfileViewModel model, string userId)
+    {
+        var userToUpdate = await _userManager.FindByIdAsync(userId);
+        userToUpdate.Update(model.Name, model.Age, model.Address, model.Weight, model.Height, model.Gender);
+        await _userManager.UpdateAsync(userToUpdate);
+
+        return await _unitOfWork.CompleteAsync();
     }
     #endregion User
 

@@ -42,15 +42,13 @@ public class Person : IdentityUser
         Gender = gender;
     }
 
-    public void Update(string name, int age, string address, EPersonType personType, decimal weight, decimal height, string phoneNumber, EPersonGender gender)
+    public void Update(string name, int age, string address, decimal weight, decimal height, EPersonGender gender)
     {
         Name = name;
         Age = age;
         Address = address;
-        PersonType = personType;
         Weight = weight;
         Height = height;
-        PhoneNumber = phoneNumber;
         Gender = gender;
     }
 }

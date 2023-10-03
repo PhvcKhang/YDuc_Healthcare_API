@@ -1,5 +1,6 @@
 ﻿using HealthCareApplication.Domains.Models;
 using HealthCareApplication.Identity.Models;
+using HealthCareApplication.Resource.Users;
 
 namespace HealthCareApplication.Identity.Resources
 {

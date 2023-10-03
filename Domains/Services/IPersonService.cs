@@ -3,6 +3,7 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
+using HealthCareApplication.Resource.Users;
 
 namespace HealthCareApplication.Domains.Services;
 
@@ -17,6 +18,7 @@ public interface IPersonService
 
     #region User
     public Task<bool> ChangePassword(string userId, string currentPassword, string newPassword);
+    public Task<bool> UpdateProfile(UpdateProfileViewModel model,string userId);
     #endregion User
 
     #region Patient

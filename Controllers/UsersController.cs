@@ -6,6 +6,7 @@ using HealthCareApplication.Resource.Persons;
 using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
+using HealthCareApplication.Resource.Users;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,22 @@ public class UsersController : Controller
             return Ok(result);
         }
         catch (Exception ex)
+
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    [HttpPatch]
+    [Route("UpdateProfile/{userId}")]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileViewModel model, [FromRoute] string userId)
+    {
+        try
+        {
+            var result = await _personService.UpdateProfile(model, userId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+
         {
             return BadRequest(ex.Message);
         }
@@ -113,7 +130,6 @@ public class UsersController : Controller
     #region Doctor
     [HttpGet]
     [Route("DoctorProfile/{doctorId}")]
-    [Authorize]
     public async Task<DoctorIProfileViewModel> GetDoctorInfo([FromRoute] string doctorId)
     {
         return await _personService.GetDoctorInfo(doctorId);

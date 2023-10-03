@@ -37,14 +37,14 @@ namespace HealthCareApplication.Controllers
         {
             return await _notificationService.GetRangeById(personId, startIndex, lastIndex);
         }
-        [HttpPut]
+        [HttpPatch]
         [Route("{notificationId}")]
         public async Task<IActionResult> ChangeStatus( [FromRoute] string notificationId)
         {
             try
             {
                 var result = await _notificationService.ChangeStatus(notificationId);
-                return Ok(result);
+                return new OkObjectResult($"seen: {result}");
             }
             catch(Exception ex)
             {
