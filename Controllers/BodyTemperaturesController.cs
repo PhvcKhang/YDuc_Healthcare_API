@@ -57,7 +57,7 @@ public class BodyTemperaturesController : Controller
                 await _notificationService.CreateNotification(notification);
 
             }
-            return new OkObjectResult($"{notifications.Count} notifications have just been sent");
+            return Ok(true);
         }
         catch (Exception ex)
         {
