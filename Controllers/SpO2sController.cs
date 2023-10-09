@@ -69,7 +69,7 @@ namespace HealthCareApplication.Controllers
                     await _notificationService.CreateNotification(notification);
 
                 }
-                return Ok(true);
+                return new OkObjectResult($"{notifications.Count} notifications have just been sent");
             }
             catch (Exception ex)
             {

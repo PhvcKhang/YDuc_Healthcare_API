@@ -26,6 +26,7 @@ public interface IPersonService
     public Task<PatientProfileViewModel> GetPatientInfo(string patientId);
     public Task<List<Person>> GetRelativesByPatientId(string patientId);
     public Task<string> AddRelative(AddNewRelativeViewModel addNewRelativeViewModel, string patientId);
+    public Task<bool> DeleteRelativeAccount(string patientId,string relativeId);
     #endregion Patient
 
     #region Doctor
@@ -39,6 +40,7 @@ public interface IPersonService
     #region Relative
     public Task<List<RelativesViewModel>> GetAllRelatives();
     public Task<RelativeProfileViewModel> GetRelativeById(string relativeId);
+
 
     #endregion Relative
 }

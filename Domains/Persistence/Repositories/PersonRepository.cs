@@ -46,7 +46,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
         Person person = await _context.Users.Include(x => x.Patients).FirstOrDefaultAsync(x => x.Id == personId) ?? throw new ResourceNotFoundException(nameof(Person), personId);
         Person patient = await _context.Users.FirstOrDefaultAsync(x => x.Id == patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         person.Patients.Remove(patient);
-        return _context.Persons
+        return _context.Users
             .Update(person)
             .Entity;
     }

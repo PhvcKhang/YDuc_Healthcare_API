@@ -40,6 +40,12 @@ public class PersonService : IPersonService
     {
         var userIdentity = _mapper.Map<Person>(registrationModel);
 
+        var IsExisting = await _personRepository.GetByPhoneNumber(userIdentity.PhoneNumber);
+        if(IsExisting is not null)
+        {
+            throw new EntityDuplicationException("This phone number has been already registered by another account");
+        }
+
         await _userManager.CreateAsync(userIdentity, registrationModel.Password);
 
         await _userManager.AddToRoleAsync(userIdentity, registrationModel.PersonType.ToString().ToLowerInvariant());
@@ -158,6 +164,7 @@ public class PersonService : IPersonService
             //Create new relative
             var relative = _mapper.Map<AddNewRelativeViewModel, Person>(addNewRelativeViewModel);
             await _userManager.CreateAsync(relative, addNewRelativeViewModel.Password);
+            await _userManager.AddToRoleAsync(relative, relative.PersonType.ToString().ToLowerInvariant());
             await _unitOfWork.CompleteAsync();
 
             //Create relationship between patient and relative
@@ -212,12 +219,13 @@ public class PersonService : IPersonService
 
     public async Task<string> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
-        //Check if the relative has existed
+        //Check if the patient and the doctor has existed 
         var isExisting = await _personRepository.IsExisting(addNewPatientViewModel.PhoneNumber);
         if (isExisting is true)
         {
-            throw new Exception("This phone number has been registed by another person");
+            throw new Exception("This phone number has been registered by another person");
         }
+        var doctor = _personRepository.GetAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
 
         //Create new patient
         var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
@@ -258,6 +266,16 @@ public class PersonService : IPersonService
         return _mapper.Map<RelativeProfileViewModel>(relative);
     }
 
+    public async Task<bool> DeleteRelativeAccount(string patientId, string relativeId)
+    {
+        var userToDelete = await _userManager.FindByIdAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
+
+        await _personRepository.RemoveRelationshipAsync(relativeId, patientId);
+
+        await _userManager.DeleteAsync(userToDelete);
+
+        return await _unitOfWork.CompleteAsync();
+    }
 
     #endregion Relative
 

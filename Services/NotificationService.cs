@@ -78,7 +78,7 @@ namespace HealthCareApplication.Services
                 lastIndex = 0;
             }
 
-            List<Notification> notificationSource = notificationsOfCarer.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex);
+            List<Notification> notificationSource = notificationsOfCarer.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex-startIndex+1);
             var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notificationSource);
             return viewModel;
         }

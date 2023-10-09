@@ -64,11 +64,11 @@ public class UsersController : Controller
     #region User
     [HttpPatch]
     [Route("ChangePassword/{userId}")]
-    public async Task<IActionResult> ChangePassword([FromRoute] string userId, string currentPassword, string newPassword)
+    public async Task<IActionResult> ChangePassword([FromRoute] string userId, [FromBody] ChangePasswordViewModel model)
     {
         try
         {
-            var result = await _personService.ChangePassword(userId, currentPassword, newPassword);
+            var result = await _personService.ChangePassword(userId, model.CurrentPassword, model.NewPassword);
             return Ok(result);
         }
         catch (Exception ex)
@@ -120,6 +120,21 @@ public class UsersController : Controller
             
         }
         catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete]
+    [Route("{patientId}/DeleteRelativeAccount/{relativeId}")]
+    public async Task<IActionResult> DeleteRelativeAccount([FromRoute] string patientId, [FromRoute] string relativeId)
+    {
+        try
+        {
+            var result = await _personService.DeleteRelativeAccount(patientId, relativeId);
+            return Ok(result);
+        }
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -187,6 +202,7 @@ public class UsersController : Controller
     {
         return await _personService.GetRelativeById(relativeId);
     }
+
     #endregion Relatives
 
 }
