@@ -64,11 +64,11 @@ namespace HealthCareApplication.Controllers
                 var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, spO2: newSpO2);
 
                 //Add user-defined sample of this notification to database
-                foreach (Notification notification in notifications)
+                foreach (var notification in notifications)
                 {
                     await _notificationService.CreateNotification(notification);
-
                 }
+
                 return Ok(true);
             }
             catch (Exception ex)

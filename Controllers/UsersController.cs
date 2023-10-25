@@ -7,6 +7,7 @@ using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.Users;
+using HealthCareApplication.Resource.Users.Admin;
 using MesMicroservice.Api.Application.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,21 @@ public class UsersController : Controller
 
     #region Admin
     [HttpPost]
+    [Route("CreateAdminAccount")]
+    public async Task<IActionResult> CreateAdminAccount([FromBody] AdminRegistrationViewModel registrationModel)
+    {
+        try
+        {
+            var result = await _personService.CreateAdminAccount(registrationModel);
+            return new OkObjectResult($"AdminId: {result}");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+    }
+    [HttpPost]
     [Route("CreateDoctorAccount")]
     public async Task<IActionResult> CreateDoctorAccount([FromBody] DoctorRegistrationViewModel registrationModel)
     {
@@ -44,6 +60,13 @@ public class UsersController : Controller
             return BadRequest(ex.Message);
         }
 
+    }
+    [HttpGet]
+    [Route("Admin/{adminId}")]
+    public async Task<AdminViewModel> GetAdmin([FromRoute] string adminId)
+    {
+        var result = await _personService.GetAdmin(adminId);
+        return result;
     }
     [HttpDelete]
     [Route("DeleteDoctorAccount/{doctorId}")]

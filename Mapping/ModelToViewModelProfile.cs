@@ -10,6 +10,7 @@ using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.SpO2;
 using HealthCareApplication.Resource.Users;
+using HealthCareApplication.Resource.Users.Admin;
 
 namespace HealthCareApplication.Mapping;
 
@@ -24,6 +25,7 @@ public class ModelToViewModelProfile : Profile
         CreateMap<Person, RelativesViewModel>();
         CreateMap<Person, RelativeProfileViewModel>();
         CreateMap<Person, UserViewModel>();
+        CreateMap<Person, AdminViewModel>();
 
         CreateMap<Notification, NotificationViewModel>(); 
 

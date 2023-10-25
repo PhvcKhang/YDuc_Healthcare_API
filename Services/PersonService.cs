@@ -10,6 +10,7 @@ using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.Users;
+using HealthCareApplication.Resource.Users.Admin;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,6 +37,22 @@ public class PersonService : IPersonService
     #endregion Properties & Constructor
 
     #region Admin
+    public async Task<string> CreateAdminAccount(AdminRegistrationViewModel registrationModel)
+    {
+        var admin = _mapper.Map<Person>(registrationModel);
+        await _userManager.CreateAsync(admin, registrationModel.Password);
+        await _userManager.AddToRoleAsync(admin, registrationModel.PersonType.ToString().ToLowerInvariant());
+        return admin.Id;
+    }
+    public async Task<AdminViewModel> GetAdmin(string adminId)
+    {
+        var admin = await _userManager.FindByIdAsync(adminId);
+        var doctors = await GetAllDoctors();
+        var viewModel = _mapper.Map<AdminViewModel>(admin);
+        viewModel.Doctors = doctors;
+        return viewModel;
+
+    } 
     public async Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel)
     {
         var userIdentity = _mapper.Map<Person>(registrationModel);
@@ -219,25 +236,30 @@ public class PersonService : IPersonService
 
     public async Task<string> AddNewPatient(AddNewPatientViewModel addNewPatientViewModel, string doctorId)
     {
+
         //Check if the patient and the doctor has existed 
         var isExisting = await _personRepository.IsExisting(addNewPatientViewModel.PhoneNumber);
-        if (isExisting is true)
-        {
-            throw new Exception("This phone number has been registered by another person");
-        }
+        var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
         var doctor = _personRepository.GetAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
 
-        //Create new patient
-        var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
-        await _userManager.CreateAsync(patient, addNewPatientViewModel.Password);
-        await _userManager.AddToRoleAsync(patient, addNewPatientViewModel.PersonType.ToString().ToLowerInvariant());
+        if (isExisting is true)
+        {
+            //Create relationship between patient and relative
+            patient = await _personRepository.GetByPhoneNumber(addNewPatientViewModel.PhoneNumber) ?? throw new ResourceNotFoundException($"{patient.Id}");
+            await CreateRelationship(doctorId, patient.Id);
+            return patient.Id;
+        }
+        if(isExisting is false)
+        {
+            //Create new patient
+            await _userManager.CreateAsync(patient, addNewPatientViewModel.Password);
+            await _userManager.AddToRoleAsync(patient, addNewPatientViewModel.PersonType.ToString().ToLowerInvariant());
+            await CreateRelationship(doctorId, patient.Id);
 
-        await _unitOfWork.CompleteAsync();
+            return patient.Id;
+        }
 
-        //Create relationship between patient and relative
-        await CreateRelationship(doctorId, patient.Id);
-
-        return patient.Id;
+        return string.Empty;
     }
     public async Task<bool> DeletePatientById(string patientId)
     {
@@ -276,6 +298,8 @@ public class PersonService : IPersonService
 
         return await _unitOfWork.CompleteAsync();
     }
+
+
 
     #endregion Relative
 

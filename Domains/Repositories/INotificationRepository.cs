@@ -7,6 +7,7 @@ namespace HealthCareApplication.Domains.Repositories
     {
         Task<Notification> CreateAsync(Notification notification);
         Task<List<Notification>> GetAllAsync();
+        Task<List<Notification>> GetByCarerIdAsync(string carerId, int startIndex,int lastIndex);
         Task<List<Notification>> GetByCarerIdAsync(string carerId);
         Task<int> GetNumberOfNotificationsAsync(string carerId);
         Notification ChangeStatusAsync(string notificationId);

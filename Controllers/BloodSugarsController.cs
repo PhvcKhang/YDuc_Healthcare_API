@@ -54,10 +54,9 @@ public class BloodSugarsController : Controller
             var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent, notificationType, bloodSugar: newBloodSugar);
 
             //Add user-defined sample of this notification to database
-            foreach (Notification notification in notifications)
+            foreach (var notification in notifications)
             {
                 await _notificationService.CreateNotification(notification);
-
             }
             return Ok(true);
         }

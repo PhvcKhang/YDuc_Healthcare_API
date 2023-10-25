@@ -4,12 +4,15 @@ using HealthCareApplication.Resource.Persons.Doctors;
 using HealthCareApplication.Resource.Persons.Patients;
 using HealthCareApplication.Resource.Persons.Relatives;
 using HealthCareApplication.Resource.Users;
+using HealthCareApplication.Resource.Users.Admin;
 
 namespace HealthCareApplication.Domains.Services;
 
 public interface IPersonService
 {
     #region Admin
+    public Task<string> CreateAdminAccount(AdminRegistrationViewModel registrationModel);
+    public Task<AdminViewModel> GetAdmin(string adminId);
     public Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel);
     public Task<bool> DeleteDoctorAccount(string doctorId);
     public Task<Person> GetPerson(string personId);

@@ -12,7 +12,7 @@ namespace HealthCareApplication.Domains.Persistence.Contexts.Configurations
             builder.Property(x => x.SpO2Id)
                 .HasDefaultValueSql("NEWID()");
 
-            builder.HasOne(x => x.Notification).WithOne(x => x.SpO2).HasForeignKey<Notification>(x => x.SpO2Id);
+            builder.HasMany(x => x.Notifications).WithOne(x => x.SpO2).HasForeignKey(x => x.SpO2Id);
         }
     }
 }

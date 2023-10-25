@@ -18,6 +18,9 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
     }
 
+    #region Admin
+    #endregion Admin
+
     #region User
 
     public async Task<Person?> GetAsync(string personId)
@@ -176,6 +179,8 @@ public class PersonRepository : BaseRepository, IPersonRepository
     {
         return await _context.Users.AnyAsync(x => x.PhoneNumber == phoneNumber);
     }
+
+
 
 
 

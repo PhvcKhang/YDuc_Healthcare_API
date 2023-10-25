@@ -26,7 +26,11 @@ namespace HealthCareApplication.Services
 
         public async Task<bool> CreateNotification(Notification notification)
         {
-            await _notificationRepository.CreateAsync(notification);
+            var result = await _notificationRepository.CreateAsync(notification);
+            if(result is null)
+            {
+                return false;
+            }
             return await _unitOfWork.CompleteAsync();
         }
 
@@ -65,21 +69,22 @@ namespace HealthCareApplication.Services
 
         public async Task<List<NotificationViewModel>> GetRangeById(string personId, int startIndex, int lastIndex)
         {
+            var count = await GetNumberOfNotifications(personId);
+            var countIndex = count - 1;
+            int numberOfNotificationsToGet = lastIndex - startIndex + 1;
 
-            var notificationsOfCarer = await _notificationRepository.GetByCarerIdAsync(personId);
-
-            var count = notificationsOfCarer.Count;
-            if (count < lastIndex - startIndex && count != 0)
+            if ( count == 0)
             {
-                lastIndex = count - 1;
-            }
-            if (count == 0)
-            {
-                lastIndex = 0;
+                return new List<NotificationViewModel>() { };
             }
 
-            List<Notification> notificationSource = notificationsOfCarer.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex-startIndex+1);
-            var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notificationSource);
+            if (numberOfNotificationsToGet >= count)
+            {
+                lastIndex = countIndex;
+            }
+
+            var notificationsOfCarer = await _notificationRepository.GetByCarerIdAsync(personId, startIndex, lastIndex);
+            var viewModel = _mapper.Map<List<Notification>, List<NotificationViewModel>>(notificationsOfCarer);
             return viewModel;
         }
     }

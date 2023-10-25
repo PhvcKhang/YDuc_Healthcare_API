@@ -51,13 +51,13 @@ public class BodyTemperaturesController : Controller
 
             var notifications = await _notificationHelper.PushAsync(patient, doctor, relatives, VIcontent, ENcontent,notificationType, bodyTemperature: newBodyTemperature);
 
+            var results = new List<bool>();
             //Add user-defined sample of this notification to database
-            foreach (Notification notification in notifications)
+            foreach (var notification in notifications)
             {
-                await _notificationService.CreateNotification(notification);
-
+                 results.Add(await _notificationService.CreateNotification(notification));
             }
-            return Ok(true);
+            return new OkObjectResult(results);
         }
         catch (Exception ex)
         {

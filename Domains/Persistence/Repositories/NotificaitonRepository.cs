@@ -20,10 +20,11 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
 
         public async Task<Notification> CreateAsync(Notification notification)
         {
-            if (await ExistsAsync(notification.NotificationId))
-            {
-                throw new EntityDuplicationException(nameof(Notification), notification.NotificationId);
-            }
+                if (await ExistsAsync(notification.NotificationId))
+                {
+                    throw new EntityDuplicationException(nameof(Notification), notification.NotificationId);
+                }
+                
             return _context.Notifications.Add(notification).Entity;
         }
         public async Task<List<Notification>> GetAllAsync()
@@ -69,15 +70,27 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             return notifications.Count;
         }
 
-        public async Task<List<Notification>> GetByCarerIdAsync(string carerId)
+        public async Task<List<Notification>> GetByCarerIdAsync(string carerId, int startIndex, int lastIndex)
         {
-            var notifications = await _context.Notifications
-            .Include(x => x.BloodPressure)
-            .Include(x => x.BloodSugar)
-            .Include(x => x.BodyTemperature)
-            .Include(x => x.SpO2)
+            var source = await _context.Notifications
             .Where(x => x.CarerId == carerId)
             .ToListAsync();
+
+            //Explicit loading
+            var notifications = source.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex - startIndex+ 1);
+            foreach(var notification in notifications)
+            {
+                await _context.Entry(notification).Reference(x => x.BloodPressure).LoadAsync();
+                await _context.Entry(notification).Reference(x => x.BloodSugar).LoadAsync();
+                await _context.Entry(notification).Reference(x => x.BodyTemperature).LoadAsync();
+                await _context.Entry(notification).Reference(x => x.SpO2).LoadAsync();
+            }
+            return notifications;
+        }
+
+        public async Task<List<Notification>> GetByCarerIdAsync(string carerId)
+        {
+            var notifications = await _context.Notifications.Where(x => x.CarerId == carerId).ToListAsync();
             return notifications;
         }
     }

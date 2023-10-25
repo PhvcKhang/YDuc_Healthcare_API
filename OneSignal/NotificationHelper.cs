@@ -73,7 +73,7 @@ namespace HealthCareApplication.OneSignal
                 if (response.Content.Contains("error"))
                 {
                     var notificationId = Guid.NewGuid().ToString("P").Substring(1,36);
-                    notifications.Add(new Notification(notificationId, VIcontent, DateTime.Now, patient.Id, patient.Name, carers[n], bloodPressure, bloodSugar, bodyTemperature, spO2, notificationType));
+                    notifications.Add(new Notification(notificationId, VIcontent, DateTime.UtcNow, patient.Id, patient.Name, carers[n], bloodPressure, bloodSugar, bodyTemperature, spO2, notificationType));
                     n++;
                 }
             }

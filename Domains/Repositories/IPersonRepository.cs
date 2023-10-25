@@ -5,6 +5,9 @@ namespace HealthCareApplication.Domains.Repositories;
 
 public interface IPersonRepository
 {
+    #region Admin
+    #endregion Admin
+
     #region User
     public Task<Person?> GetAsync(string personId);
     public Task<Person?> GetByPhoneNumber(string phoneNumber);

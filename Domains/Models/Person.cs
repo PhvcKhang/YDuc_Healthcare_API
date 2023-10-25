@@ -15,7 +15,7 @@ public class Person : IdentityUser
     public EPersonGender Gender { get; private set; }
     public decimal Weight { get; private set; }
     public decimal Height { get; private set; }
-    public List<Person> Patients { get; private set; } 
+    public List<Person> Patients { get; private set; } = new List<Person>();
     public List<BloodPressure> BloodPressures { get; private set; }
     public List<BloodSugar> BloodSugars { get; private set; }
     public List<BodyTemperature> BodyTemperatures { get; private set; }
