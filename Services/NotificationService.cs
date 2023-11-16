@@ -42,7 +42,7 @@ namespace HealthCareApplication.Services
         }
         public async Task<bool> ChangeStatus(string notificationId)
         {
-            _notificationRepository.ChangeStatusAsync(notificationId);
+            await _notificationRepository.ChangeStatusAsync(notificationId);
             return await _unitOfWork.CompleteAsync();
         }
 
@@ -78,7 +78,7 @@ namespace HealthCareApplication.Services
                 return new List<NotificationViewModel>() { };
             }
 
-            if (numberOfNotificationsToGet >= count)
+            if ((numberOfNotificationsToGet >= count)||(lastIndex >= countIndex))
             {
                 lastIndex = countIndex;
             }

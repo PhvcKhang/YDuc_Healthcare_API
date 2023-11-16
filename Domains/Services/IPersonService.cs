@@ -22,6 +22,8 @@ public interface IPersonService
     #region User
     public Task<bool> ChangePassword(string userId, string currentPassword, string newPassword);
     public Task<bool> UpdateProfile(UpdateProfileViewModel model,string userId);
+    public Task<bool> ResetPassword(string phoneNumber);
+    public Task<bool> RemoveRelationship(string relativeId, string patientId);
     #endregion User
 
     #region Patient
@@ -42,7 +44,7 @@ public interface IPersonService
 
     #region Relative
     public Task<List<RelativesViewModel>> GetAllRelatives();
-    public Task<RelativeProfileViewModel> GetRelativeById(string relativeId);
+    public Task<RelativeProfileViewModel> GetRelativeProfile(string relativeId);
 
 
     #endregion Relative

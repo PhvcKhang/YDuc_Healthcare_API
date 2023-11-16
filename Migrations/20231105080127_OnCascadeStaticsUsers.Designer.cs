@@ -4,6 +4,7 @@ using HealthCareApplication.Domains.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthCareApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231105080127_OnCascadeStaticsUsers")]
+    partial class OnCascadeStaticsUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BloodPressures", (string)null);
+                    b.ToTable("BloodPressures");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BloodSugar", b =>
@@ -76,7 +79,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BloodSugars", (string)null);
+                    b.ToTable("BloodSugars");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BodyTemperature", b =>
@@ -103,7 +106,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BodyTemperatures", (string)null);
+                    b.ToTable("BodyTemperatures");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
@@ -164,7 +167,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("SpO2Id");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Person", b =>
@@ -282,7 +285,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("SpO2s", (string)null);
+                    b.ToTable("SpO2s");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -430,7 +433,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("PersonPerson", (string)null);
+                    b.ToTable("PersonPerson");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BloodPressure", b =>

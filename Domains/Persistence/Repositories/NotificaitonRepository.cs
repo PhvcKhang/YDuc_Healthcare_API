@@ -44,11 +44,10 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             return await _context.Notifications
                 .AnyAsync(x => x.NotificationId == notificationId);
         }
-        public Notification ChangeStatusAsync(string notificationId)
+        public async Task<Notification> ChangeStatusAsync(string notificationId)
         {
-            var notificaiton =  _context.Notifications
-                                .Where(x => x.NotificationId == notificationId)
-                                .FirstOrDefault();
+            var notificaiton =  await _context.Notifications
+                                .FirstOrDefaultAsync(x => x.NotificationId == notificationId);
             notificaiton.Seen = true;
             return _context.Notifications.Update(notificaiton).Entity;
 
@@ -65,7 +64,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
         public async Task<int> GetNumberOfNotificationsAsync(string doctorId)
         {
             var doctor = await _context.Persons.FirstOrDefaultAsync(x => x.Id == doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
-            List<Notification> notifications = await _context.Notifications.Where(x => x.Carer == doctor).ToListAsync();
+            List<Notification> notifications = await _context.Notifications.Where(x => x.CarerId == doctorId).ToListAsync();
 
             return notifications.Count;
         }
@@ -77,7 +76,7 @@ namespace HealthCareApplication.Domains.Persistence.Repositories
             .ToListAsync();
 
             //Explicit loading
-            var notifications = source.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex - startIndex+ 1);
+            var notifications = source.OrderByDescending(x => x.SendAt).ToList().GetRange(startIndex, lastIndex - startIndex + 1);
             foreach(var notification in notifications)
             {
                 await _context.Entry(notification).Reference(x => x.BloodPressure).LoadAsync();

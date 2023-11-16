@@ -74,22 +74,14 @@ public class PersonService : IPersonService
 
         var doctor = await _personRepository.GetPersonWithPatientsAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
 
-        List<Person> patients = new();
-        patients.AddRange(doctor.Patients);
-
-        foreach (var patient in patients)
+        if(doctor.Patients.Count == 0) 
         {
-            var relatives = await _personRepository.GetRelativesByPatientIdAsync(patient.Id);
-            foreach (var relative in relatives)
-            {
-                await _personRepository.RemoveRelationshipAsync(relative.Id, patient.Id);
-                await _userManager.DeleteAsync(relative);
-            }
-            await _personRepository.RemoveRelationshipAsync(doctor.Id, patient.Id);
-            await _userManager.DeleteAsync(patient);
+            await _userManager.DeleteAsync(doctor);
         }
-
-        await _userManager.DeleteAsync(doctor);
+        if(doctor.Patients.Count > 0)
+        {
+            throw new Exception("Cannot delete this account because it is still in a relationship with another account.");
+        }
 
         return await _unitOfWork.CompleteAsync();
         
@@ -122,6 +114,27 @@ public class PersonService : IPersonService
 
         return await _unitOfWork.CompleteAsync();
     }
+    public async Task<bool> ResetPassword(string phoneNumber)
+    {
+        var userToUpdate = await _personRepository.GetByPhoneNumber(phoneNumber) ?? throw new ResourceNotFoundException("This phone number hasn't been registered");
+        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(userToUpdate);
+        var result = await _userManager.ResetPasswordAsync(userToUpdate, resetToken, userToUpdate.PhoneNumber);
+        return result.Succeeded;
+    }
+    public async Task<bool> RemoveRelationship(string relativeId, string patientId)
+    {
+        var relative = await _personRepository.GetPersonWithPatientsAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
+        if(relative.Patients.Count == 1)
+        {
+            await _userManager.DeleteAsync(relative);
+        }
+        if(relative.Patients.Count > 1)
+        {
+            await _personRepository.RemoveRelationshipAsync(relativeId, patientId);
+            await _personRepository.DeleteNotificationsOfRelative(relativeId, patientId);
+        }
+        return await _unitOfWork.CompleteAsync();
+    }
     #endregion User
 
     #region Patients
@@ -137,20 +150,17 @@ public class PersonService : IPersonService
         var listOfPeople = await _personRepository.GetPatientInfoAsync(patientId);
         var patientViewModel = _mapper.Map<PatientProfileViewModel>(listOfPeople[0]);
 
-        //Demo-Only Relationship error
-        if (listOfPeople.Count() == 4)
+        foreach(var person in listOfPeople)
         {
-            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
-            patientViewModel.Relatives = _mapper.Map<List<Person>, List<RelativesViewModel>>(new List<Person>() { listOfPeople[2], listOfPeople[3] });
-        }
-        else if (listOfPeople.Count() == 3)
-        {
-            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
-            patientViewModel.Relatives = _mapper.Map<List<Person>, List<RelativesViewModel>>(new List<Person>() { listOfPeople[2] });
-        }
-        else if (listOfPeople.Count() == 2)
-        {
-            patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(listOfPeople[1]);
+            if(person.PersonType == EPersonType.Doctor)
+            {
+                patientViewModel.Doctor = _mapper.Map<DoctorsViewModel>(person);
+            }
+            if(person.PersonType == EPersonType.Relative)
+            {
+                var relative = _mapper.Map<RelativesViewModel>(person);
+                patientViewModel.Relatives.Add(relative);
+            }
         }
 
         return patientViewModel;
@@ -239,19 +249,19 @@ public class PersonService : IPersonService
 
         //Check if the patient and the doctor has existed 
         var isExisting = await _personRepository.IsExisting(addNewPatientViewModel.PhoneNumber);
-        var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
-        var doctor = _personRepository.GetAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
+        var doctor = await _personRepository.GetAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
 
         if (isExisting is true)
         {
             //Create relationship between patient and relative
-            patient = await _personRepository.GetByPhoneNumber(addNewPatientViewModel.PhoneNumber) ?? throw new ResourceNotFoundException($"{patient.Id}");
+            var patient = await _personRepository.GetByPhoneNumber(addNewPatientViewModel.PhoneNumber);
             await CreateRelationship(doctorId, patient.Id);
             return patient.Id;
         }
         if(isExisting is false)
         {
             //Create new patient
+            var patient = _mapper.Map<AddNewPatientViewModel, Person>(addNewPatientViewModel);
             await _userManager.CreateAsync(patient, addNewPatientViewModel.Password);
             await _userManager.AddToRoleAsync(patient, addNewPatientViewModel.PersonType.ToString().ToLowerInvariant());
             await CreateRelationship(doctorId, patient.Id);
@@ -266,12 +276,37 @@ public class PersonService : IPersonService
         var patient = await _personRepository.GetAsync(patientId) ?? throw new ResourceNotFoundException(nameof(Person), patientId);
         var relatives = await _personRepository.GetRelativesByPatientIdAsync(patientId);
 
-        foreach (var relative in relatives)
+            foreach (var relative in relatives)
+            {
+             var relativeWithPatients = await _personRepository.GetPersonWithPatientsAsync(relative.Id);
+
+                if (relativeWithPatients?.Patients.Count == 1)
+                {
+                    await _personRepository.RemoveRelationshipAsync(patientId, relative.Id);
+                    await _userManager.DeleteAsync(relative);
+                }
+                if (relativeWithPatients?.Patients.Count > 1)
+                {
+                    await _personRepository.RemoveRelationshipAsync(patientId, relative.Id);
+                }
+            }
+        await _personRepository.DeleteNotificationsRelatingToThisPatient(patientId);
+        await _unitOfWork.CompleteAsync();
+
+        await _userManager.DeleteAsync(patient);
+        return await _unitOfWork.CompleteAsync();
+    }
+    public async Task<bool> DeleteRelativeAccount(string patientId, string relativeId)
+    {
+        var relative = await _userManager.FindByIdAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
+        if(relative.Patients.Count == 0)
         {
-            await _personRepository.RemoveRelationshipAsync(relative.Id, patient.Id);
             await _userManager.DeleteAsync(relative);
         }
-        await _userManager.DeleteAsync(patient);
+        if(relative.Patients.Count > 0)
+        {
+            throw new Exception("Cannot delete this account because it is still in a relationship with another patient");
+        }
         return await _unitOfWork.CompleteAsync();
     }
     #endregion Doctor
@@ -282,25 +317,11 @@ public class PersonService : IPersonService
         var relatives = await _personRepository.GetAllRelativesAsync() ?? throw new ResourceNotFoundException();
         return _mapper.Map<List<Person>,List<RelativesViewModel>>(relatives);
     }
-    public async Task<RelativeProfileViewModel> GetRelativeById(string relativeId)
+    public async Task<RelativeProfileViewModel> GetRelativeProfile(string relativeId)
     {
-        var relative = await _personRepository.GetRelativeAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
+        var relative = await _personRepository.GetRelativeProfileAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
         return _mapper.Map<RelativeProfileViewModel>(relative);
     }
-
-    public async Task<bool> DeleteRelativeAccount(string patientId, string relativeId)
-    {
-        var userToDelete = await _userManager.FindByIdAsync(relativeId) ?? throw new ResourceNotFoundException(nameof(Person), relativeId);
-
-        await _personRepository.RemoveRelationshipAsync(relativeId, patientId);
-
-        await _userManager.DeleteAsync(userToDelete);
-
-        return await _unitOfWork.CompleteAsync();
-    }
-
-
-
     #endregion Relative
 
 }

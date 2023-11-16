@@ -10,7 +10,7 @@ namespace HealthCareApplication.Domains.Repositories
         Task<List<Notification>> GetByCarerIdAsync(string carerId, int startIndex,int lastIndex);
         Task<List<Notification>> GetByCarerIdAsync(string carerId);
         Task<int> GetNumberOfNotificationsAsync(string carerId);
-        Notification ChangeStatusAsync(string notificationId);
+        Task<Notification> ChangeStatusAsync(string notificationId);
         Task<Notification> DeleteAsync(string notificationId);
     }
 }

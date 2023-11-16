@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace HealthCareApplication.Controllers;
 
@@ -70,14 +71,14 @@ public class UsersController : Controller
     }
     [HttpDelete]
     [Route("DeleteDoctorAccount/{doctorId}")]
-    public async Task<IActionResult> DeleteDoctorAccount(string doctorId)
+    public async Task<IActionResult> DeleteDoctorAccount([FromRoute]string doctorId)
     {
         try
         {
             var result = await _personService.DeleteDoctorAccount(doctorId);
             return Ok(result);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -115,6 +116,35 @@ public class UsersController : Controller
             return BadRequest(ex.Message);
         }
     }
+    [HttpPatch]
+    [Route("ResetPassword")]
+    public async Task<IActionResult> ResetPassword([FromQuery] string phoneNumber)
+    {
+        try
+        {
+            var result = await _personService.ResetPassword(phoneNumber);
+            return Ok(result);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPatch]
+    [Route("RemoveRelationship/{relativeId}&&{patientId}")]
+    public async Task<IActionResult> RemoveRelationship([FromRoute]string relativeId, [FromRoute] string patientId)
+    {
+        try
+        {
+            var result = await _personService.RemoveRelationship(relativeId, patientId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
     #endregion User
 
     #region Patient
@@ -148,20 +178,20 @@ public class UsersController : Controller
         }
     }
 
-    [HttpDelete]
-    [Route("{patientId}/DeleteRelativeAccount/{relativeId}")]
-    public async Task<IActionResult> DeleteRelativeAccount([FromRoute] string patientId, [FromRoute] string relativeId)
-    {
-        try
-        {
-            var result = await _personService.DeleteRelativeAccount(patientId, relativeId);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+    //[HttpDelete]
+    //[Route("{patientId}/DeleteRelativeAccount/{relativeId}")]
+    //public async Task<IActionResult> DeleteRelativeAccount([FromRoute] string patientId, [FromRoute] string relativeId)
+    //{
+    //    try
+    //    {
+    //        var result = await _personService.DeleteRelativeAccount(patientId, relativeId);
+    //        return Ok(result);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
 
     #endregion Patient
 
@@ -187,7 +217,7 @@ public class UsersController : Controller
         try
         {
             var result = await _personService.AddNewPatient(addNewPatientViewModel, doctorId);
-            return new OkObjectResult($"PatientId: {result}");
+            return new OkObjectResult("\"Id\":"+$"\"{result}\"");
         }
         catch(Exception ex)
         {
@@ -221,9 +251,9 @@ public class UsersController : Controller
 
     [HttpGet]
     [Route("RelativeProfile/{relativeId}")]
-    public async Task<RelativeProfileViewModel> GetRelativeById( [FromRoute]string relativeId)
+    public async Task<RelativeProfileViewModel> GetRelativeProfile( [FromRoute]string relativeId)
     {
-        return await _personService.GetRelativeById(relativeId);
+        return await _personService.GetRelativeProfile(relativeId);
     }
 
     #endregion Relatives

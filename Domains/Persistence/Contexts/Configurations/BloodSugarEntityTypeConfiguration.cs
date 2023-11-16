@@ -12,6 +12,6 @@ public class BloodSugarEntityTypeConfiguration : IEntityTypeConfiguration<BloodS
         builder.Property(x => x.BloodSugarId)
             .HasDefaultValueSql("NEWID()");
 
-        builder.HasMany(x => x.Notifications).WithOne(x => x.BloodSugar).HasForeignKey(x => x.BloodSugarId);
+        builder.HasMany(x => x.Notifications).WithOne(x => x.BloodSugar).HasForeignKey(x => x.BloodSugarId).OnDelete(DeleteBehavior.Cascade);
     }
 }

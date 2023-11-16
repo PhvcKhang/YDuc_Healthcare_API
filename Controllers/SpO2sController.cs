@@ -41,7 +41,6 @@ namespace HealthCareApplication.Controllers
         {
             try
             {
-
                 //Create a new statistic
                 var newSpO2 = await _spO2Service.CreateSpO2(patientId, spO2);
                 var updatedDate = DateTime.Now.ToString();
@@ -52,7 +51,6 @@ namespace HealthCareApplication.Controllers
 
                 //Look for the patient
                 Person patient = await _personService.GetPerson(patientId);
-
 
                 //Push Notificaiton to OneSignal
                 var pronounce = (patient.Gender == EPersonGender.Male) ? "his" : "her";
