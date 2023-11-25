@@ -46,14 +46,14 @@ public class PersonService : IPersonService
     }
     public async Task<AdminViewModel> GetAdmin(string adminId)
     {
-        var admin = await _userManager.FindByIdAsync(adminId);
-        var doctors = await GetAllDoctors();
+        var admin = await _personRepository.GetPersonWithPatientsAsync(adminId) ?? throw new ResourceNotFoundException(nameof(Person), adminId); ;
         var viewModel = _mapper.Map<AdminViewModel>(admin);
-        viewModel.Doctors = doctors;
+        var doctorsViewModel = _mapper.Map< List<Person>,List<DoctorsViewModel>>(admin.Patients);
+        viewModel.Doctors = doctorsViewModel;
         return viewModel;
 
     } 
-    public async Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel)
+    public async Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel, string adminId)
     {
         var userIdentity = _mapper.Map<Person>(registrationModel);
 
@@ -67,15 +67,20 @@ public class PersonService : IPersonService
 
         await _userManager.AddToRoleAsync(userIdentity, registrationModel.PersonType.ToString().ToLowerInvariant());
 
+        await _personRepository.AddPatientAsync(adminId, userIdentity.Id); //Patients of Admin = Doctors of Admin
+
+        await _unitOfWork.CompleteAsync();
+
         return userIdentity.Id;
     }
     public async Task<bool> DeleteDoctorAccount(string doctorId)
     {
-
+        var admin = await _personRepository.FindByIdAsync(doctorId) ?? throw new ResourceNotFoundException("Can not find admin"); ; //Find admin who managed
         var doctor = await _personRepository.GetPersonWithPatientsAsync(doctorId) ?? throw new ResourceNotFoundException(nameof(Person), doctorId);
 
         if(doctor.Patients.Count == 0) 
         {
+            await _personRepository.RemoveRelationshipAsync(admin.Id, doctor.Id);
             await _userManager.DeleteAsync(doctor);
         }
         if(doctor.Patients.Count > 0)

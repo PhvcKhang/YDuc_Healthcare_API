@@ -49,7 +49,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BloodPressures", (string)null);
+                    b.ToTable("BloodPressures");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BloodSugar", b =>
@@ -76,7 +76,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BloodSugars", (string)null);
+                    b.ToTable("BloodSugars");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BodyTemperature", b =>
@@ -103,7 +103,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("BodyTemperatures", (string)null);
+                    b.ToTable("BodyTemperatures");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Notification", b =>
@@ -164,7 +164,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("SpO2Id");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.Person", b =>
@@ -282,7 +282,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("SpO2s", (string)null);
+                    b.ToTable("SpO2s");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -430,7 +430,7 @@ namespace HealthCareApplication.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("PersonPerson", (string)null);
+                    b.ToTable("PersonPerson");
                 });
 
             modelBuilder.Entity("HealthCareApplication.Domains.Models.BloodPressure", b =>
@@ -471,17 +471,17 @@ namespace HealthCareApplication.Migrations
                     b.HasOne("HealthCareApplication.Domains.Models.BloodPressure", "BloodPressure")
                         .WithMany("Notifications")
                         .HasForeignKey("BloodPressureId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HealthCareApplication.Domains.Models.BloodSugar", "BloodSugar")
                         .WithMany("Notifications")
                         .HasForeignKey("BloodSugarId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HealthCareApplication.Domains.Models.BodyTemperature", "BodyTemperature")
                         .WithMany("Notifications")
                         .HasForeignKey("BodyTemperatureId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HealthCareApplication.Domains.Models.Person", "Carer")
                         .WithMany("Notifications")
@@ -491,7 +491,7 @@ namespace HealthCareApplication.Migrations
                     b.HasOne("HealthCareApplication.Domains.Models.SpO2", "SpO2")
                         .WithMany("Notifications")
                         .HasForeignKey("SpO2Id")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("BloodPressure");
 

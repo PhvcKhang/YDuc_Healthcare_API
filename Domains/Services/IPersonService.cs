@@ -13,7 +13,7 @@ public interface IPersonService
     #region Admin
     public Task<string> CreateAdminAccount(AdminRegistrationViewModel registrationModel);
     public Task<AdminViewModel> GetAdmin(string adminId);
-    public Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel);
+    public Task<string> CreateDoctorAccount(DoctorRegistrationViewModel registrationModel, string adminId);
     public Task<bool> DeleteDoctorAccount(string doctorId);
     public Task<Person> GetPerson(string personId);
 

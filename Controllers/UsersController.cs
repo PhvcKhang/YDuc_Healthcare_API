@@ -48,12 +48,12 @@ public class UsersController : Controller
 
     }
     [HttpPost]
-    [Route("CreateDoctorAccount")]
-    public async Task<IActionResult> CreateDoctorAccount([FromBody] DoctorRegistrationViewModel registrationModel)
+    [Route("CreateDoctorAccount/{adminId}")]
+    public async Task<IActionResult> CreateDoctorAccount([FromBody] DoctorRegistrationViewModel registrationModel, string adminId)
     {
         try
         {
-            var result = await _personService.CreateDoctorAccount(registrationModel);
+            var result = await _personService.CreateDoctorAccount(registrationModel, adminId);
             return new OkObjectResult($"DoctorId: {result}");
         }
         catch (Exception ex)
